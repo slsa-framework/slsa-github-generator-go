@@ -131,11 +131,11 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 			},
 		},
 		Predicate: slsa.ProvenancePredicate{
-			// Identifies that this is a gossts slsa-go build.
+			// Identifies that this is a slsa-framework's slsa-github-generator-go' build.
 			BuildType: "https://github.com/slsa-framework/slsa-github-generator-go@v1",
 			// Identifies the reusable workflow and matches the job_workflow_ref.
 			Builder: slsa.ProvenanceBuilder{
-				// TODO(https://github.com/in-toto/in-toto-golang/issues/159): add
+				// TODO(https://github.com/slsa-framework/slsa-github-generator-go/issues/6): add
 				// version and hash.
 				ID: "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main",
 			},
