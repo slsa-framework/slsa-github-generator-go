@@ -22,7 +22,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/gossts/slsa-go/builder/pkg"
+	"github.com/slsa-framework/slsa-github-generator-go/builder/pkg"
 )
 
 func usage(p string) {

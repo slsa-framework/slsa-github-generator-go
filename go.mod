@@ -1,4 +1,4 @@
-module github.com/gossts/slsa-go/builder
+module github.com/slsa-framework/slsa-github-generator-go/builder
 
 go 1.17
 

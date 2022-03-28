@@ -38,9 +38,9 @@ An example of the provenance generated from this repo is below:
   ],
   "predicate": {
     "builder": {
-      "id": "https://github.com/gossts/slsa-go/.github/workflows/builder.yml@main"
+      "id": "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main"
     },
-    "buildType": "https://github.com/gossts/slsa-go@v1",
+    "buildType": "https://github.com/slsa-framework/slsa-github-generator-go@v1",
     "invocation": {
       "configSource": {
         "uri": "git+https://github.comasraa/slsa-on-github-test@refs/heads/main.git",
@@ -135,7 +135,7 @@ ldflags:
 
 ### Workflow inputs
 
-The builder workflow [gossts/slsa-go/.github/workflows/builder.yml](.github/workflows/builder.yml) accepts the following inputs:
+The builder workflow [slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml](.github/workflows/builder.yml) accepts the following inputs:
 
 | Name | Required | Description |
 | ------------ | -------- | ----------- |
@@ -177,7 +177,7 @@ jobs:
       id-token: write
       contents: read
     needs: args
-    uses: gossts/slsa-go/.github/workflows/builder.yml@main # TODO: use hash upon release.
+    uses: slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main # TODO: use hash upon release.
     with:
       go-version: 1.17
       # Optional: only needed if using ldflags.
@@ -206,11 +206,11 @@ jobs:
 ```
 
 ## Verification of provenance
-To verify the provenance, use the [github.com/gossts/slsa-provenance](github.com/gossts/slsa-provenance) project. 
+To verify the provenance, use the [github.com/slsa-framework/slsa-verifier](github.com/slsa-framework/slsa-verifier) project. 
 
 ### Inputs
 ```shell
-$ git clone git@github.com:gossts/slsa-provenance.git
+$ git clone git@github.com:slsa-framework/slsa-verifier.git
 $ go run . --help
     -binary string
     	path to a binary to verify
@@ -233,7 +233,7 @@ verified SLSA provenance produced at
  {
         "caller": "origin/repo",
         "commit": "0dfcd24824432c4ce587f79c918eef8fc2c44d7b",
-        "job_workflow_ref": "/gossts/slsa-go/.github/workflows/builder.yml@refs/heads/main",
+        "job_workflow_ref": "/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@refs/heads/main",
         "trigger": "workflow_dispatch",
         "issuer": "https://token.actions.githubusercontent.com"
 }
