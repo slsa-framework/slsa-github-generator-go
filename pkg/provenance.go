@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -309,11 +308,11 @@ func getReusableWorkflowID() (string, error) {
 		Value string `json:"value"`
 	}
 
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	fmt.Printf("body:'%s'", string(bodyBytes))
+	// bodyBytes, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return "", err
+	// }
+	// fmt.Printf("body:'%s'", string(bodyBytes))
 
 	// bodyBytes, err := os.ReadFile("token.json")
 	// if err != nil {
@@ -322,14 +321,14 @@ func getReusableWorkflowID() (string, error) {
 	// ior := bytes.NewReader(data)
 	// decoder := json.NewDecoder(ior)
 	// Extract the value from JSON payload.
-	// decoder := json.NewDecoder(resp.Body)
-	// if err := decoder.Decode(&payload); err != nil {
-	// 	return "", err
-	// }
-
-	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
-		return "", fmt.Errorf("json.Unmarshal: %w", err)
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&payload); err != nil {
+		return "", err
 	}
+
+	// if err := json.Unmarshal(bodyBytes, &payload); err != nil {
+	// 	return "", fmt.Errorf("json.Unmarshal: %w", err)
+	// }
 
 	// This is a JWT token with 3 parts.
 	parts := strings.Split(payload.Value, ".")
@@ -340,9 +339,9 @@ func getReusableWorkflowID() (string, error) {
 	content := parts[1]
 
 	// Base64-decode the content.
-	token, err := base64.StdEncoding.DecodeString(content)
+	token, err := base64.RawURLEncoding.DecodeString(content)
 	if err != nil {
-		return "", fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
+		return "", fmt.Errorf("base64.RawURLEncoding.DecodeString: %w", err)
 	}
 
 	// Extract fields from JSON payload.
