@@ -103,6 +103,12 @@ type (
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.1
 func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, error) {
+	// id, err := getReusableWorkflowID()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// fmt.Printf(id)
+	// panic("bla")
 	gh := &gitHubContext{}
 
 	if err := json.Unmarshal([]byte(ghContext), gh); err != nil {
@@ -301,14 +307,27 @@ func getReusableWorkflowID() (string, error) {
 		Value string `json:"value"`
 	}
 
+	// data, err := os.ReadFile("token.json")
+	// if err != nil {
+	// 	return "", err
+	// }
+	// ior := bytes.NewReader(data)
 	// Extract the value from JSON payload.
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&payload); err != nil {
 		return "", err
 	}
 
-	// Base64-decode the value.
-	cs, err := base64.StdEncoding.DecodeString(payload.Value)
+	// This is a JWT token with 3 parts.
+	parts := strings.Split(payload.Value, ".")
+	if len(parts) != 3 {
+		return "", fmt.Errorf("invalid jwt token: found %d parts", len(parts))
+	}
+
+	content := parts[1]
+
+	// Base64-decode the content.
+	token, err := base64.StdEncoding.DecodeString(content)
 	if err != nil {
 		return "", fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
 	}
@@ -318,12 +337,12 @@ func getReusableWorkflowID() (string, error) {
 		JobWorkflowRef string `json:"job_workflow_ref"`
 	}
 
-	if err := json.Unmarshal(cs, &oidc); err != nil {
+	if err := json.Unmarshal(token, &oidc); err != nil {
 		return "", fmt.Errorf("json.Unmarshal: %w", err)
 	}
 
 	if oidc.JobWorkflowRef == "" {
-		return "", fmt.Errorf("invalid job_workflow_ref: %v", cs)
+		return "", fmt.Errorf("invalid job_workflow_ref: %v", token)
 	}
 
 	return oidc.JobWorkflowRef, nil
