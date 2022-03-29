@@ -24,8 +24,8 @@ env:
   # Builder
   BUILDER_BINARY: builder
   # This repo.
-  BUILDER_REPOSITORY: laurentsimon/slsa-github-generator-go
-  BUILDER_REF: feat/builderid
+  BUILDER_REPOSITORY: slsa-framework/slsa-github-generator-go
+  BUILDER_REF: main
 
 ###################################################################
 #                                                                 #
