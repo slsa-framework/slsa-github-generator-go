@@ -43,7 +43,7 @@ An example of the provenance generated from this repo is below:
     "buildType": "https://github.com/slsa-framework/slsa-github-generator-go@v1",
     "invocation": {
       "configSource": {
-        "uri": "git+https://github.comasraa/slsa-on-github-test@refs/heads/main.git",
+        "uri": "git+https://github.com/asraa/slsa-on-github-test@refs/heads/main.git",
         "digest": {
           "sha1": "11dba28bf106e98f9992daa56e3967be41a5f11d"
         },
@@ -195,7 +195,7 @@ jobs:
           name: ${{ needs.build.outputs.go-binary-name }}
       - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
-          name: ${{ needs.build.outputs.go-binary-name }}.intoto.sig
+          name: ${{ needs.build.outputs.go-binary-name }}.intoto.jsonl
       - name: Release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         if: startsWith(github.ref, 'refs/tags/')
