@@ -166,7 +166,7 @@ jobs:
       id-token: write
       contents: read
     needs: args
-    uses: gossts/slsa-go/.github/workflows/builder.yml@<somehash>
+    uses: slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@<somehash>
     with:
       go-version: 1.17
 
@@ -225,7 +225,7 @@ Given an artifact and a signed provenance, we perform the following steps:
 
 A consumer performing these steps has the guarantee that the binary they consume was produced in the trusted builder at a given commit hash attested to in the provenance.
 
-The provenance verification demo code is hosted [here](https://github.com/gossts/slsa-provenance). An example output shows that we can retrieve the caller repository, trigger and reference where the artifact was built that consumers may use:
+The provenance verification demo code is hosted [here](https://github.com/slsa-framework/slsa-verifier). An example output shows that we can retrieve the caller repository, trigger and reference where the artifact was built that consumers may use:
 
 ```shell
 $ go run main.go --binary ~/Downloads/binary-linux-amd64 --provenance ~/Downloads/binary-linux-amd64.intoto.jsonl --source github.com/asraa/slsa-on-github-test
@@ -234,7 +234,7 @@ verified SLSA provenance produced at
  {
         "caller": "asraa/slsa-on-github-test",
         "commit": "0dfcd24824432c4ce587f79c918eef8fc2c44d7b",
-        "job_workflow_ref": "/gossts/slsa-go/.github/workflows/builder.yml@refs/heads/main",
+        "job_workflow_ref": "/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@refs/heads/main",
         "trigger": "workflow_dispatch",
         "issuer": "https://token.actions.githubusercontent.com"
 }
