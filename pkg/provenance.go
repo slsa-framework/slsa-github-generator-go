@@ -103,12 +103,12 @@ type (
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.1
 func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, error) {
-	id, err := getReusableWorkflowID()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf(id)
-	panic("bla")
+	// id, err := getReusableWorkflowID()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// fmt.Printf(id)
+	// panic("bla")
 	gh := &gitHubContext{}
 
 	if err := json.Unmarshal([]byte(ghContext), gh); err != nil {
