@@ -103,12 +103,6 @@ type (
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.1
 func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, error) {
-	// id, err := getReusableWorkflowID()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// fmt.Printf(id)
-	// panic("bla")
 	gh := &gitHubContext{}
 
 	if err := json.Unmarshal([]byte(ghContext), gh); err != nil {
@@ -156,7 +150,7 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 			Builder: slsa.ProvenanceBuilder{
 				// TODO(https://github.com/slsa-framework/slsa-github-generator-go/issues/6): add
 				// version and hash.
-				ID: fmt.Sprintf("https://github.com/slsa-framework/slsa-github-generator-go/%s", builderID),
+				ID: fmt.Sprintf("https://github.com/%s", builderID),
 			},
 			Invocation: slsa.ProvenanceInvocation{
 				ConfigSource: slsa.ConfigSource{
@@ -308,27 +302,11 @@ func getReusableWorkflowID() (string, error) {
 		Value string `json:"value"`
 	}
 
-	// bodyBytes, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// fmt.Printf("body:'%s'", string(bodyBytes))
-
-	// bodyBytes, err := os.ReadFile("token.json")
-	// if err != nil {
-	// 	return "", err
-	// }
-	// ior := bytes.NewReader(data)
-	// decoder := json.NewDecoder(ior)
 	// Extract the value from JSON payload.
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&payload); err != nil {
 		return "", err
 	}
-
-	// if err := json.Unmarshal(bodyBytes, &payload); err != nil {
-	// 	return "", fmt.Errorf("json.Unmarshal: %w", err)
-	// }
 
 	// This is a JWT token with 3 parts.
 	parts := strings.Split(payload.Value, ".")
