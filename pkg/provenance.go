@@ -104,12 +104,12 @@ type (
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.1
 func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, error) {
-	// id, err := getReusableWorkflowID()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// fmt.Printf(id)
-	// panic("bla")
+	id, err := getReusableWorkflowID()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf(id)
+	panic("bla")
 	gh := &gitHubContext{}
 
 	if err := json.Unmarshal([]byte(ghContext), gh); err != nil {
@@ -305,6 +305,7 @@ func getReusableWorkflowID() (string, error) {
 	defer resp.Body.Close()
 
 	var payload struct {
+		// Count string `json:"count"`
 		Value string `json:"value"`
 	}
 
@@ -312,17 +313,22 @@ func getReusableWorkflowID() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("body:%s", string(bodyBytes))
+	fmt.Printf("body:'%s'", string(bodyBytes))
 
-	// data, err := os.ReadFile("token.json")
+	// bodyBytes, err := os.ReadFile("token.json")
 	// if err != nil {
 	// 	return "", err
 	// }
 	// ior := bytes.NewReader(data)
+	// decoder := json.NewDecoder(ior)
 	// Extract the value from JSON payload.
-	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		return "", err
+	// decoder := json.NewDecoder(resp.Body)
+	// if err := decoder.Decode(&payload); err != nil {
+	// 	return "", err
+	// }
+
+	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
+		return "", fmt.Errorf("json.Unmarshal: %w", err)
 	}
 
 	// This is a JWT token with 3 parts.
