@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -156,7 +157,7 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 			Builder: slsa.ProvenanceBuilder{
 				// TODO(https://github.com/slsa-framework/slsa-github-generator-go/issues/6): add
 				// version and hash.
-				ID: builderID,
+				ID: fmt.Sprintf("https://github.com/slsa-framework/slsa-github-generator-go/%s", builderID),
 			},
 			Invocation: slsa.ProvenanceInvocation{
 				ConfigSource: slsa.ConfigSource{
@@ -306,6 +307,12 @@ func getReusableWorkflowID() (string, error) {
 	var payload struct {
 		Value string `json:"value"`
 	}
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("body:%s", string(bodyBytes))
 
 	// data, err := os.ReadFile("token.json")
 	// if err != nil {
