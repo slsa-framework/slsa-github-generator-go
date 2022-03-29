@@ -10,9 +10,9 @@ ________
 - [Workflow inputs](#workflow-inputs)
 - [Workflow Example](#workflow-example)
 
-[Verification of provenance](#verification)
+[Verification of provenance](#verification-of-provenance)
 - [Inputs](#inputs)
-- [Command line examples](#command-line-example)
+- [Command line examples](#command-line-examples)
 
 [Technical design](#technial-design)
 - [Blog posts](#blog-posts)
@@ -226,7 +226,7 @@ $ go run . --help
 
 ### Command line examples
 ```shell
-$ go run . --binary ~/Downloads/binary-linux-amd64 --provenance ~/Downloads/binary-linux-amd64.intoto.jsonl --source github.com/origin/repo --branch "refs/heads/main" --tag "refs/tags/v1.2"
+$ go run . --binary ~/Downloads/binary-linux-amd64 --provenance ~/Downloads/binary-linux-amd64.intoto.jsonl --source github.com/origin/repo
 
 Verified against tlog entry 1544571
 verified SLSA provenance produced at 
