@@ -100,7 +100,7 @@ jobs:
             echo "hash of $BUILDER_BINARY is $BUILDER_DIGEST"
 
       - name: Upload the builder
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
         with:
           name: "${{ env.BUILDER_BINARY }}"
           path: "${{ env.BUILDER_BINARY }}"
@@ -279,7 +279,7 @@ jobs:
           echo "::set-output name=go-binary-sha256::$DIGEST"
 
       - name: Upload the artifact
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
         with:
           name: "${{ env.GENERATED_BINARY_NAME }}"
           path: "${{ env.GENERATED_BINARY_NAME }}"
@@ -318,7 +318,7 @@ jobs:
           mv "${{ env.GENERATED_BINARY_NAME }}" "$UNTRUSTED_BINARY_NAME"
 
       - name: Upload the generated binary
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
         with:
           name: "${{ needs.build-dry.outputs.go-binary-name }}"
           path: "${{ needs.build-dry.outputs.go-binary-name }}"
@@ -380,7 +380,7 @@ jobs:
           ./"$BUILDER_BINARY" provenance --binary-name "$UNTRUSTED_BINARY_NAME" --digest "$UNTRUSTED_BINARY_HASH" --command "$UNTRUSTED_COMMAND" --env "$UNTRUSTED_ENV"
 
       - name: Upload the signed provenance
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
         with:
           name: "${{ steps.sign-prov.outputs.signed-provenance-name }}"
           path: "${{ steps.sign-prov.outputs.signed-provenance-name }}"
