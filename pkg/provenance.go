@@ -283,8 +283,12 @@ func verifyProvenanceName(name string) error {
 
 // Note: see https://github.com/sigstore/cosign/blob/739947de3d0197fbaab926bd9b896963ebf47a19/pkg/providers/github/github.go.
 func getReusableWorkflowID() (string, error) {
-	url := os.Getenv(requestURLEnvKey) + "&audience=" + audience
+	urlKey := os.Getenv(requestURLEnvKey)
+	if urlKey == "" {
+		return "", fmt.Errorf("requestURLEnvKey is empty")
+	}
 
+	url := urlKey + "&audience=" + audience
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
@@ -298,7 +302,6 @@ func getReusableWorkflowID() (string, error) {
 	defer resp.Body.Close()
 
 	var payload struct {
-		// Count string `json:"count"`
 		Value string `json:"value"`
 	}
 
@@ -332,7 +335,7 @@ func getReusableWorkflowID() (string, error) {
 	}
 
 	if oidc.JobWorkflowRef == "" {
-		return "", fmt.Errorf("invalid job_workflow_ref: %v", token)
+		return "", fmt.Errorf("job_workflow_ref is empty")
 	}
 
 	return oidc.JobWorkflowRef, nil
