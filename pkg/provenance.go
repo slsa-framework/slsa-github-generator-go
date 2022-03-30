@@ -22,6 +22,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
 	"strings"
 
 	intoto "github.com/in-toto/in-toto-golang/in_toto"
@@ -66,6 +68,12 @@ type gitHubContext struct {
 var (
 	parametersVersion  int = 1
 	buildConfigVersion int = 1
+)
+
+const (
+	requestTokenEnvKey = "ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+	requestURLEnvKey   = "ACTIONS_ID_TOKEN_REQUEST_URL"
+	audience           = "slsa-framework"
 )
 
 type (
@@ -117,6 +125,11 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 		return nil, err
 	}
 
+	builderID, err := getReusableWorkflowID()
+	if err != nil {
+		return nil, err
+	}
+
 	att := intoto.ProvenanceStatement{
 		StatementHeader: intoto.StatementHeader{
 			Type:          intoto.StatementInTotoV01,
@@ -137,7 +150,7 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 			Builder: slsa.ProvenanceBuilder{
 				// TODO(https://github.com/slsa-framework/slsa-github-generator-go/issues/6): add
 				// version and hash.
-				ID: "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main",
+				ID: fmt.Sprintf("https://github.com/%s", builderID),
 			},
 			Invocation: slsa.ProvenanceInvocation{
 				ConfigSource: slsa.ConfigSource{
@@ -266,4 +279,64 @@ func verifyProvenanceName(name string) error {
 	}
 
 	return nil
+}
+
+// Note: see https://github.com/sigstore/cosign/blob/739947de3d0197fbaab926bd9b896963ebf47a19/pkg/providers/github/github.go.
+func getReusableWorkflowID() (string, error) {
+	urlKey := os.Getenv(requestURLEnvKey)
+	if urlKey == "" {
+		return "", fmt.Errorf("requestURLEnvKey is empty")
+	}
+
+	url := urlKey + "&audience=" + audience
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Add("Authorization", "bearer "+os.Getenv(requestTokenEnvKey))
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	var payload struct {
+		Value string `json:"value"`
+	}
+
+	// Extract the value from JSON payload.
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&payload); err != nil {
+		return "", err
+	}
+
+	// This is a JWT token with 3 parts.
+	parts := strings.Split(payload.Value, ".")
+	if len(parts) != 3 {
+		return "", fmt.Errorf("invalid jwt token: found %d parts", len(parts))
+	}
+
+	content := parts[1]
+
+	// Base64-decode the content.
+	token, err := base64.RawURLEncoding.DecodeString(content)
+	if err != nil {
+		return "", fmt.Errorf("base64.RawURLEncoding.DecodeString: %w", err)
+	}
+
+	// Extract fields from JSON payload.
+	var oidc struct {
+		JobWorkflowRef string `json:"job_workflow_ref"`
+	}
+
+	if err := json.Unmarshal(token, &oidc); err != nil {
+		return "", fmt.Errorf("json.Unmarshal: %w", err)
+	}
+
+	if oidc.JobWorkflowRef == "" {
+		return "", fmt.Errorf("job_workflow_ref is empty")
+	}
+
+	return oidc.JobWorkflowRef, nil
 }
