@@ -156,27 +156,11 @@ on:
 permissions: read-all
       
 jobs:
-  # Generate ldflags dynamically.
-  # Optional: only needed for ldflags.
-  args:
-    runs-on: ubuntu-latest
-    outputs:
-      ldflags: ${{ steps.ldflags.outputs.value }}
-    steps:
-      - id: checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.3.4
-        with:
-          fetch-depth: 0
-      - id: ldflags
-        run: |
-          echo "::set-output name=value::$(./scripts/version-ldflags)"
-
   # Trusted builder.
   build:
     permissions:
       id-token: write
       contents: read
-    needs: args
     uses: slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main # TODO: use hash upon release.
     with:
       go-version: 1.17
