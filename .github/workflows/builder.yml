@@ -133,7 +133,7 @@ jobs:
           go-version: ${{ inputs.go-version }}
 
       - name: Download builder
-        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # v2.1.0
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # v2.1.0
         with:
           name: "${{ env.BUILDER_BINARY }}"
 
@@ -209,7 +209,7 @@ jobs:
           go-version: ${{ inputs.go-version }}
 
       - name: Download builder
-        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # v2.1.0
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # v2.1.0
         with:
           name: "${{ env.BUILDER_BINARY }}"
 
@@ -296,7 +296,7 @@ jobs:
     needs: [build, build-dry]
     steps:
       - name: Download generated binary
-        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # v2.1.0
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # v2.1.0
         with:
           name: "${{ env.GENERATED_BINARY_NAME }}"
 
@@ -338,7 +338,7 @@ jobs:
       contents: read
     steps:
       - name: Download builder
-        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # v2.1.0
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # v2.1.0
         with:
           name: "${{ env.BUILDER_BINARY }}"
 
