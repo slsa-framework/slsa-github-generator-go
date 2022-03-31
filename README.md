@@ -206,7 +206,7 @@ jobs:
 ```
 
 ## Verification of provenance
-To verify the provenance, use the [github.com/slsa-framework/slsa-verifier](github.com/slsa-framework/slsa-verifier) project. 
+To verify the provenance, use the [github.com/slsa-framework/slsa-verifier](https://github.com/slsa-framework/slsa-verifier) project. 
 
 ### Inputs
 ```shell
