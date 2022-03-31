@@ -28,7 +28,7 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="1.46"
-     inkscape:cx="236.30137"
+     inkscape:cx="231.50685"
      inkscape:cy="173.28767"
      inkscape:window-width="1920"
      inkscape:window-height="1126"
@@ -43,6 +43,14 @@
        clip-rule="nonzero"
        id="path139" />
   </clipPath>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-rule:evenodd;fill-opacity:1"
+     id="rect419"
+     width="612.29559"
+     height="232.28149"
+     x="0"
+     y="0"
+     inkscape:label="rect419" />
   <g
      clip-path="url(#p.0)"
      id="g229"
@@ -332,12 +340,4 @@
        fill-rule="evenodd"
        id="path227" />
   </g>
-  <rect
-     style="opacity:1;fill:#ffffff;fill-rule:evenodd;fill-opacity:0"
-     id="rect419"
-     width="612.29559"
-     height="232.28149"
-     x="0"
-     y="0"
-     inkscape:label="rect419" />
 </svg>
