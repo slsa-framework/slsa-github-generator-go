@@ -68,7 +68,7 @@ jobs:
           export WORKFLOW_REF=$(echo $OIDC_TOKEN | cut -d "." -f2 | base64 -d | jq -r '.job_workflow_ref')
           export BUILDER_REF=$(echo $WORKFLOW_REF | cut -d "@" -f2)
           export BUILDER_REPO=$(echo $WORKFLOW_REF | cut -d "@" -f1 | cut -d '/' -f1-2)
-          echo "::set-output name=builder_ref::$BUILDER_REPO"
+          echo "::set-output name=builder_repo::$BUILDER_REPO"
           echo "::set-output name=builder_ref::$BUILDER_REF"
 
   builder:
