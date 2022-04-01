@@ -73,7 +73,7 @@ var (
 const (
 	requestTokenEnvKey = "ACTIONS_ID_TOKEN_REQUEST_TOKEN"
 	requestURLEnvKey   = "ACTIONS_ID_TOKEN_REQUEST_URL"
-	audience           = "https://github.com/slsa-framework/slsa-github-generator-go"
+	audience           = "slsa-framework/slsa-github-generator-go/builder"
 )
 
 type (

@@ -70,7 +70,7 @@ jobs:
               echo "Failed to get OIDC token from GitHub, response $status_code: $error_msg"
               exit 1;
           fi
-          export WORKFLOW_REF=$(echo json.json | jq -r '.value' | cut -d "." -f2 | base64 -d | jq -r '.job_workflow_ref')
+          export WORKFLOW_REF=$(echo jwt.json | jq -r '.value' | cut -d "." -f2 | base64 -d | jq -r '.job_workflow_ref')
           if [ -z $WORKFLOW_REF ]; then
             echo "OIDC token parsing failure: job_workflow_ref could not be retrieved"
             exit 1;
