@@ -64,7 +64,7 @@ jobs:
         id: detect
         shell: bash
         run: | 
-          status_code=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml" -o jwt.json -w '%{http_code}')
+          status_code=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com/slsa-framework/slsa-github-generator-go" -o jwt.json -w '%{http_code}')
           if [[ $status_code -ge 400 ]]; then
               error_msg=$(jq -r .message jwt.json 2>/dev/null || echo 'unknown error')
               echo "Failed to get OIDC token from GitHub, response $status_code: $error_msg"
