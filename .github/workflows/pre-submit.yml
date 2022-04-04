@@ -4,7 +4,7 @@ on: [pull_request, workflow_dispatch]
 permissions: read-all
 
 jobs:
-  unit-tests:
+  pre-submits:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
