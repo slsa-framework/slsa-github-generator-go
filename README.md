@@ -243,7 +243,7 @@ successfully verified SLSA provenance
 ## Technical design
 
 ### Blog post
-Find our blog post series [here](TODO).
+Find our blog post series [here](https://security.googleblog.com/2022/04/improving-software-supply-chain.html).
 
 ### Specifications
 For a more in-depth technical dive, read the [SPECIFICATIONS.md](./SPECIFICATIONS.md).
