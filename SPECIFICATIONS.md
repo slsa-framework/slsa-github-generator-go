@@ -197,7 +197,7 @@ An example of the output provenance can be found in [README.md#example-provenanc
 
 ### Provenance Verification
 
-Given an artifact and a signed provenance, a consumer must verify the authenticity, integrity, proof of service-generation, and non-falsifiability of the provenance in order to make accurate risk based assessments based on their security posture. 
+Given an artifact and a signed provenance, a consumer must verify the authenticity, integrity, proof of service-generation, and non-forgeability of the provenance in order to make accurate risk based assessments based on their security posture. 
 
 Authenticity and integrity come from the digital signature on the provenance that was created using a private key accessible only to the service generating the provenance. The ephemeral key is generated and stored inside the isolated builder VM. 
 
@@ -205,7 +205,7 @@ Moreover, the provenance is non-forgeable. We first verify builder identity: by 
 
 Because the signing key in the certificate and the OIDC token are only accessible inside this workflow, we have high confidence that the provenance was generated inside the service and that no other process could have impersonated the trusted builder. The ephemeral signing key is generated inside the workflow and does not get written to logs or leave the process. Moreover, even if the signing key was compromised, any signatures generated after the lifetime of the certificate (10 min) would be invalid, unless the attacker could retrieve a valid GitHub provisioned OIDC token for the trusted builder. Thus, the signing key is protected by the TTL of the certificate and its ephemerality. Further improvements on the scope of the signing certificate are discussed [here](https://github.com/sigstore/fulcio/issues/475). 
 
-Non-falsifiability also requires user isolation: users cannot interfere with the process inside the trusted builder by the isolation of reusable workflows on GitHub-hosted runners (assuming trust in GitHub). The user-defined build process is also isolated from the provenance signing key by job isolation. 
+Non-forgeability also requires user isolation: users cannot interfere with the process inside the trusted builder by the isolation of reusable workflows on GitHub-hosted runners (assuming trust in GitHub). The user-defined build process is also isolated from the provenance signing key by job isolation. 
 
 Note that we rely on GitHub hosted runners executing the defined code to trust that the provenance was correctly generated inside the builder and that no other process could impersonate the builder.
 
@@ -215,7 +215,7 @@ Given an artifact and a signed provenance, we perform the following steps:
 
 1. **Download the certificate from the Rekor log**: Search the Rekor log by artifact hash to find the entry containing the signed provenance and extract the signing certificate. (See Rekor Log RT in Verification Latency for how this could be skipped).
 
-2. **Verify the signed provenance**: Verify the signature in the DSSE payload using the signing certificate, and the chain of the signing certificate up to the Fulcio root CA. This verifies non-falsifiability of the payload and establishes trust in the contents of the certificate.
+2. **Verify the signed provenance**: Verify the signature in the DSSE payload using the signing certificate, and the chain of the signing certificate up to the Fulcio root CA. This verifies non-forgeability of the payload and establishes trust in the contents of the certificate.
 
 3. **Extract the builder identity from the signing certificate**: Extract certificate information (see [here](https://github.com/sigstore/fulcio/blob/c74e2cfb763dd32def5dc921ff49f579fa262d96/docs/oid-info.md#136141572641--fulcio) for extension OIDs). Verify that the signing certificate’s subject name (job_workflow_ref) is the trusted builder ID at a trusted hash (repository SHA in the diagram below). This verifies authenticity of the provenance and guarantees the provenance was correctly populated.
 
