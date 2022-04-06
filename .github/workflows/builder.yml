@@ -370,8 +370,8 @@ jobs:
       BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
       GITHUB_CONTEXT: "${{ toJSON(github) }}"
     uses: slsa-framework/slsa-github-generator/.github/workflows/provenance.yml@main
-      with: 
-        subjects: "$UNTRUSTED_BINARY_HASH $UNTRUSTED_BINARY_NAME"
+    with:
+      subjects: "$UNTRUSTED_BINARY_HASH $UNTRUSTED_BINARY_NAME"
 
   upload:
     runs-on: ubuntu-latest
