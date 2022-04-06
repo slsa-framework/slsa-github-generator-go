@@ -361,16 +361,9 @@ jobs:
     permissions:
       id-token: write # Needed for keyless.
       contents: read
-    env:
-      UNTRUSTED_BINARY_NAME: "${{ needs.build-dry.outputs.go-binary-name }}"
-      UNTRUSTED_BINARY_HASH: "${{ needs.build.outputs.go-binary-sha256 }}"
-      UNTRUSTED_COMMAND: "${{ needs.build-dry.outputs.go-command }}"
-      UNTRUSTED_ENV: "${{ needs.build-dry.outputs.go-env }}"
-      BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
-      GITHUB_CONTEXT: "${{ toJSON(github) }}"
     uses: slsa-framework/slsa-github-generator/.github/workflows/provenance.yml@main
     with:
-      subjects: "$UNTRUSTED_BINARY_HASH $UNTRUSTED_BINARY_NAME"
+      subjects: "${{ needs.build-dry.outputs.go-binary-name }} ${{ needs.build.outputs.go-binary-sha256 }}"
 
   upload:
     runs-on: ubuntu-latest
