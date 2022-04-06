@@ -1,7 +1,7 @@
 # Generation of SLSA3+ provenance for Go binaries
 This repository contains a reference implementation for generating non-forgeable [SLSA provenance](https://slsa.dev/) that meets the requirement for the [SLSA level 3 and above](https://slsa.dev/spec/v0.1/levels) for projects using the Go programming language.
 
-This repository contains the code, examples and technical design for our blog post on [Non forgeable SLSA provenance using GitHub workflows](TODO).
+This repository contains the code, examples and technical design for our blog post on [Non forgeable SLSA provenance using GitHub workflows](https://security.googleblog.com/2022/04/improving-software-supply-chain.html).
 
 ________
 [Generation of provenance](#generation)
@@ -214,14 +214,16 @@ $ git clone git@github.com:slsa-framework/slsa-verifier.git
 $ go run . --help
     -binary string
     	path to a binary to verify
+    -branch string
+    	expected branch the binary was compiled from (default "main")
     -provenance string
     	path to a provenance file
     -source string
-        expected source repository that should have produced the binary, e.g. github.com/org/example
+    	expected source repository that should have produced the binary, e.g. github.com/some/repo
     -tag string
-       expected tag or version the build was generated for
-    -branch
-      expected branch the build was generated from       
+    	[optional] expected tag the binary was compiled from
+    -versioned-tag string
+    	[optional] expected version the binary was compiled from. Uses semantic version to match the tag
 ```
 
 ### Command line examples
