@@ -3,7 +3,7 @@ This repository contains a reference implementation for generating non-forgeable
 
 This repository contains the code, examples and technical design for our blog post on [Non forgeable SLSA provenance using GitHub workflows](https://security.googleblog.com/2022/04/improving-software-supply-chain.html).
 
-***Note: we are working on an official release, so the code is subject to changes until then*** 
+***Note: This is a beta release and we are looking for your feedback. The official 1.0 release should come out in the next few weeks*** 
 
 ________
 [Generation of provenance](#generation)
