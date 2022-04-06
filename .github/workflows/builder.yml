@@ -362,32 +362,8 @@ jobs:
       id-token: write # Needed for keyless.
       contents: read
     steps:
-      - name: Download builder
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # v2.1.0
-        with:
-          name: "${{ env.BUILDER_BINARY }}"
-
-      - name: Verify builder
-        env:
-          BUILDER_HASH: "${{ needs.builder.outputs.go-builder-sha256 }}"
-          BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
-        run: |
-          set -euo pipefail
-
-          echo "hash of builder should be $BUILDER_HASH"
-          COMPUTED_HASH=$(sha256sum "$BUILDER_BINARY" | awk '{print $1}')
-          echo "builder hash computed is $COMPUTED_HASH"
-
-          # Compare hashes. Explicit exit to be safe.
-          # TODO: remove the builder as well.
-          echo "$BUILDER_HASH $BUILDER_BINARY" | sha256sum --strict --check --status || exit -2
-    
-          # Make the builder executable.
-          chmod a+x "$BUILDER_BINARY"
-
       - name: Create and sign provenance
         id: sign-prov
-        shell: bash
         env:
           UNTRUSTED_BINARY_NAME: "${{ needs.build-dry.outputs.go-binary-name }}"
           UNTRUSTED_BINARY_HASH: "${{ needs.build.outputs.go-binary-sha256 }}"
@@ -395,20 +371,15 @@ jobs:
           UNTRUSTED_ENV: "${{ needs.build-dry.outputs.go-env }}"
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
           GITHUB_CONTEXT: "${{ toJSON(github) }}"
-        run: |
-          set -euo pipefail
-
-          echo "provenance generator is $BUILDER_BINARY"
-
-          # Create and sign provenance
-          # This sets signed-provenance-name to the name of the signed DSSE envelope.
-          ./"$BUILDER_BINARY" provenance --binary-name "$UNTRUSTED_BINARY_NAME" --digest "$UNTRUSTED_BINARY_HASH" --command "$UNTRUSTED_COMMAND" --env "$UNTRUSTED_ENV"
-
+        uses: slsa-framework/slsa-github-generator/.github/workflows/provenance.yml@main
+        with: 
+          subjects: "$UNTRUSTED_BINARY_HASH $UNTRUSTED_BINARY_NAME"
+    
       - name: Upload the signed provenance
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
         with:
-          name: "${{ steps.sign-prov.outputs.signed-provenance-name }}"
-          path: "${{ steps.sign-prov.outputs.signed-provenance-name }}"
+          name: "${{ steps.sign-prov.outputs.attestation-name }}"
+          path: "${{ steps.sign-prov.outputs.attestation-name }}"
           if-no-files-found: error
           retention-days: 5
 
