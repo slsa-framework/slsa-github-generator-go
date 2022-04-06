@@ -356,7 +356,6 @@ jobs:
   #                                                                 #
   ###################################################################
   provenance:
-    runs-on: ubuntu-latest
     needs: [builder, build, build-dry]
     id: sign-prov
     permissions:
