@@ -1,4 +1,4 @@
-// Copyright The GOSST team.
+// Copyright 2022 SLSA Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ func main() {
 		check(err)
 
 		filename := fmt.Sprintf("%s.intoto.jsonl", *provenanceName)
-		err = ioutil.WriteFile(filename, attBytes, 0600)
+		err = ioutil.WriteFile(filename, attBytes, 0o600)
 		check(err)
 
 		fmt.Printf("::set-output name=signed-provenance-name::%s\n", filename)
