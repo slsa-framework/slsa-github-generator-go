@@ -199,6 +199,9 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 						"sha1": gh.SHA,
 					},
 				},
+				{
+					URI: fmt.Sprintf("https://github.com/actions/virtual-environments/releases/tag/%s/%s", os.Getenv("ImageOS"), os.Getenv("ImageVersion")),
+				},
 			},
 		},
 	}
