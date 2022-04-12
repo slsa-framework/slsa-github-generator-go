@@ -163,7 +163,7 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 				// Non user-controllable environment vars needed to reproduce the build.
 				Environment: map[string]interface{}{
 					"arch":               "amd64", // TODO: Does GitHub run actually expose this?
-					"os":                 "ubuntu",
+					"os":                 os.Getenv("ImageOS"),
 					"github_event_name":  gh.EventName,
 					"github_run_number":  gh.RunNumber,
 					"github_run_id":      gh.RunID,
