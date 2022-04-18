@@ -141,7 +141,7 @@ The builder workflow [slsa-framework/slsa-github-generator-go/.github/workflows/
 
 | Name | Required | Description |
 | ------------ | -------- | ----------- |
-| `go-version` | no | The go version for your project. This value is passed, unchanged, to the [actions/setup-go](https://github.com/actions/setup-go) action when setting up the environment |
+| `go-version` | yes | The go version for your project. This value is passed, unchanged, to the [actions/setup-go](https://github.com/actions/setup-go) action when setting up the environment |
 | `env` | no | A list of environment variables, seperated by `,`: `VAR1: value, VAR2: value`. This is typically used to pass dynamically-generated values, such as `ldflags`. Note that only environment variables with names starting with `CGO_` or `GO` are accepted.|
 
 ### Workflow Example
