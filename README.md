@@ -40,7 +40,7 @@ An example of the provenance generated from this repo is below:
   ],
   "predicate": {
     "builder": {
-      "id": "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main"
+      "id": "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@main"
     },
     "buildType": "https://github.com/slsa-framework/slsa-github-generator-go@v1",
     "invocation": {
@@ -137,7 +137,7 @@ ldflags:
 
 ### Workflow inputs
 
-The builder workflow [slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml](.github/workflows/builder.yml) accepts the following inputs:
+The builder workflow [slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml](.github/workflows/slsa3_builder.yml) accepts the following inputs:
 
 | Name | Required | Description |
 | ------------ | -------- | ----------- |
@@ -179,7 +179,7 @@ jobs:
       id-token: write
       contents: read
     needs: args
-    uses: slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@main # TODO: use hash upon release.
+    uses: slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@main # TODO: use hash upon release.
     with:
       go-version: 1.17
       # Optional: only needed if using ldflags.
@@ -237,7 +237,7 @@ verified SLSA provenance produced at
  {
         "caller": "origin/repo",
         "commit": "0dfcd24824432c4ce587f79c918eef8fc2c44d7b",
-        "job_workflow_ref": "/slsa-framework/slsa-github-generator-go/.github/workflows/builder.yml@refs/heads/main",
+        "job_workflow_ref": "/slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@refs/heads/main",
         "trigger": "workflow_dispatch",
         "issuer": "https://token.actions.githubusercontent.com"
 }
