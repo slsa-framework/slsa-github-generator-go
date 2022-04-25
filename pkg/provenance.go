@@ -162,8 +162,8 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 				},
 				// Non user-controllable environment vars needed to reproduce the build.
 				Environment: map[string]interface{}{
-					"arch":               "amd64", // TODO: Does GitHub run actually expose this?
-					"os":                 "ubuntu",
+					"arch":               os.Getenv("RUNNER_ARCH"),
+					"os":                 os.Getenv("ImageOS"),
 					"github_event_name":  gh.EventName,
 					"github_run_number":  gh.RunNumber,
 					"github_run_id":      gh.RunID,
@@ -198,6 +198,9 @@ func GenerateProvenance(name, digest, ghContext, command, envs string) ([]byte, 
 					Digest: slsa.DigestSet{
 						"sha1": gh.SHA,
 					},
+				},
+				{
+					URI: fmt.Sprintf("https://github.com/actions/virtual-environments/releases/tag/%s/%s", os.Getenv("ImageOS"), os.Getenv("ImageVersion")),
 				},
 			},
 		},

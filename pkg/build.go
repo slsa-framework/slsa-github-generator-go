@@ -302,7 +302,7 @@ func (b *GoBuild) generateLdflags() (string, error) {
 		ss := "{{ .Env."
 		es := "}}"
 		found := false
-		for true {
+		for {
 			start := strings.Index(v, ss)
 			if start == -1 {
 				break
@@ -331,7 +331,7 @@ func (b *GoBuild) generateLdflags() (string, error) {
 		a = append(a, res)
 	}
 	if len(a) > 0 {
-		return fmt.Sprintf("%s", strings.Join(a, " ")), nil
+		return strings.Join(a, " "), nil
 	}
 
 	return "", nil
