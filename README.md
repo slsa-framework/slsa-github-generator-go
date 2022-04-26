@@ -49,16 +49,12 @@ An example of the provenance generated from this repo is below:
   ],
   "predicate": {
     "builder": {
-<<<<<<< HEAD
-      "id": "https://github.com/ianlewis/slsa-github-generator-go/.github/workflows/builder.yml@refs/heads/library"
-=======
       "id": "https://github.com/slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@main"
->>>>>>> main
     },
     "buildType": "https://github.com/slsa-framework/slsa-github-generator-go@v1",
     "invocation": {
       "configSource": {
-        "uri": "git+https://github.com/ianlewis/actions-test@refs/heads/main",
+        "uri": "git+https://github.com/slsa-framework/actions-test@refs/heads/main",
         "digest": {
           "sha1": "d29d1701b47bbbe489e94b053611e5a7bf6d9414"
         },
