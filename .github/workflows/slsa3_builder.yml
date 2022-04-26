@@ -53,9 +53,18 @@ on:
 jobs:
   test-bool:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') && inputs.upload-assets == 'true'
+    if: startsWith(github.ref, 'refs/tags/') && inputs.upload-assets == true
     steps:
       - run: |
+          echo happens if release is on
+          exit 1
+  test-bool2:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') && inputs.upload-assets != true
+    steps:
+      - run: |
+          echo happens if release is off
+          exit 1
           exit 1
   
   ###################################################################
