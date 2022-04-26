@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -26,6 +27,7 @@ import (
 var (
 	errorInvalidEnvironmentVariable = errors.New("invalid environment variable")
 	errorUnsupportedVersion         = errors.New("version not supported")
+	errorInvalidDirectory           = errors.New("invalid directory")
 )
 
 var supportedVersions = map[int]bool{
@@ -40,11 +42,13 @@ type goReleaserConfigFile struct {
 	Ldflags []string `yaml:"ldflags"`
 	Binary  string   `yaml:"binary`
 	Version int      `yaml:"version"`
+	Main    *string  `yaml:"main"`
 }
 
 type GoReleaserConfig struct {
 	Goos    string
 	Goarch  string
+	Main    *string
 	Env     map[string]string
 	Flags   []string
 	Ldflags []string
@@ -74,12 +78,17 @@ func fromConfig(cf *goReleaserConfigFile) (*GoReleaserConfig, error) {
 		return nil, err
 	}
 
+	if err := validateMain(cf); err != nil {
+		return nil, err
+	}
+
 	cfg := GoReleaserConfig{
 		Goos:    cf.Goos,
 		Goarch:  cf.Goarch,
 		Flags:   cf.Flags,
 		Ldflags: cf.Ldflags,
 		Binary:  cf.Binary,
+		Main:    cf.Main,
 	}
 
 	if err := cfg.setEnvs(cf); err != nil {
@@ -87,6 +96,28 @@ func fromConfig(cf *goReleaserConfigFile) (*GoReleaserConfig, error) {
 	}
 
 	return &cfg, nil
+}
+
+func validateMain(cf *goReleaserConfigFile) error {
+	if cf.Main == nil {
+		return nil
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	p, err := filepath.Abs(*cf.Main)
+	if err != nil {
+		return err
+	}
+
+	if !strings.HasPrefix(p, wd+"/") {
+		return errorInvalidDirectory
+	}
+
+	return nil
 }
 
 func validateVersion(cf *goReleaserConfigFile) error {

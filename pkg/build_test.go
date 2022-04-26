@@ -801,7 +801,7 @@ func Test_generateFlags(t *testing.T) {
 
 			flags, err := b.generateFlags()
 			expectedFlags := append([]string{"gocompiler", "build", "-mod=vendor"}, tt.flags...)
-			fmt.Println(err)
+
 			if !errCmp(err, tt.expected) {
 				t.Errorf(cmp.Diff(err, tt.expected))
 			}
@@ -815,4 +815,84 @@ func Test_generateFlags(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_generateCommand(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		flags []string
+	}{
+		{
+			name:  "some flags",
+			flags: []string{"-race", "-x"},
+		},
+		{
+			name:  "some other flags",
+			flags: []string{"-x"},
+		},
+		{
+			name: "other random flags",
+			flags: []string{
+				"-a", "-race", "-msan", "-asan",
+				"-v", "-x", "-buildinfo", "-buildmode",
+				"-buildvcs", "-compiler", "-gccgoflags",
+				"-gcflags", "-ldflags", "-linkshared",
+				"-tags", "-trimpath", "bla",
+			},
+		},
+		{
+			name: "even more flags",
+			flags: []string{
+				"-a", "-race", "-msan", "-asan",
+				"-v", "-x", "-buildinfo", "-buildmode",
+				"-buildvcs", "-compiler", "-gccgoflags",
+				"-gcflags", "-ldflags", "-linkshared",
+				"-tags", "-trimpath",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt // Re-initializing variable so it is not changed while executing the closure below
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfgs := []goReleaserConfigFile{
+				{
+					Version: 1,
+					Flags:   tt.flags,
+					Main:    asPointer("./some/path/main.go"),
+				},
+				{
+					Version: 1,
+					Flags:   tt.flags,
+				},
+			}
+
+			for _, cfg := range cfgs {
+				c, err := fromConfig(&cfg)
+				if err != nil {
+					t.Errorf("fromConfig: %v", err)
+				}
+				b := GoBuildNew("gocompiler", c)
+
+				command := b.generateCommand(tt.flags, "out-binary")
+				expectedCommand := append(tt.flags, "-o", "out-binary")
+				if cfg.Main != nil {
+					expectedCommand = append(expectedCommand, *cfg.Main)
+				}
+
+				sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
+				if !cmp.Equal(command, expectedCommand, sorted) {
+					t.Errorf(cmp.Diff(command, expectedCommand))
+				}
+			}
+		})
+	}
+}
+
+func asPointer(s string) *string {
+	return &s
 }
