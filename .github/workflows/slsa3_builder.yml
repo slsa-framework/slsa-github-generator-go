@@ -1,5 +1,5 @@
 # Copyright The GOSST team.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -63,7 +63,7 @@ jobs:
       - name: Detect the builder ref
         id: detect
         shell: bash
-        run: | 
+        run: |
           status_code=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=slsa-framework/slsa-github-generator-go/builder" -o jwt.json -w '%{http_code}')
           if [[ $status_code -ge 400 ]]; then
               error_msg=$(jq -r .message jwt.json 2>/dev/null || echo 'unknown error')
@@ -95,7 +95,7 @@ jobs:
       - name: Set up golang environment
         uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v2.1.3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Download dependencies
         shell: bash
@@ -116,13 +116,13 @@ jobs:
         env:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
         run: |
-            set -euo pipefail
+          set -euo pipefail
 
-            # https://go.dev/ref/mod#build-commands.
-            go build -mod=vendor -o "$BUILDER_BINARY"
-            BUILDER_DIGEST=$(sha256sum "$BUILDER_BINARY" | awk '{print $1}')
-            echo "::set-output name=go-builder-sha256::$BUILDER_DIGEST"
-            echo "hash of $BUILDER_BINARY is $BUILDER_DIGEST"
+          # https://go.dev/ref/mod#build-commands.
+          go build -mod=vendor -o "$BUILDER_BINARY"
+          BUILDER_DIGEST=$(sha256sum "$BUILDER_BINARY" | awk '{print $1}')
+          echo "::set-output name=go-builder-sha256::$BUILDER_DIGEST"
+          echo "hash of $BUILDER_BINARY is $BUILDER_DIGEST"
 
       - name: Upload the builder
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # v2.3.1
@@ -176,7 +176,7 @@ jobs:
           # Compare hashes. Explicit exit to be safe.
           # TODO: remove the builder as well.
           echo "$BUILDER_HASH $BUILDER_BINARY" | sha256sum --strict --check --status || exit -2
-    
+
           # Make the builder executable.
           chmod a+x "$BUILDER_BINARY"
 
@@ -252,7 +252,7 @@ jobs:
           # Compare hashes. Explicit exit to be safe.
           # TODO: remove the builder as well.
           echo "$BUILDER_HASH $BUILDER_BINARY" | sha256sum --strict --check --status || exit -2
-    
+
           # Make the builder executable.
           chmod a+x "$BUILDER_BINARY"
 
@@ -287,7 +287,6 @@ jobs:
           echo "./$BUILDER_BINARY" build "$CONFIG_FILE" "$UNTRUSTED_ENVS"
           export OUTPUT_BINARY="${{ env.GENERATED_BINARY_NAME }}"
           ./"$BUILDER_BINARY" build "$CONFIG_FILE" "$UNTRUSTED_ENVS"
-
 
       - name: Compute binary hash
         id: build-sha256
@@ -325,13 +324,13 @@ jobs:
         with:
           name: "${{ env.GENERATED_BINARY_NAME }}"
 
-      - name: Verify binary hash 
+      - name: Verify binary hash
         env:
           UNTRUSTED_BINARY_HASH: "${{ needs.build.outputs.go-binary-sha256 }}"
           UNTRUSTED_BINARY_NAME: "${{ needs.build-dry.outputs.go-binary-name }}"
         run: |
           set -euo pipefail
-      
+
           echo "hash of binary ${{ env.GENERATED_BINARY_NAME }} should be $UNTRUSTED_BINARY_HASH"
 
           COMPUTED_HASH=$(sha256sum "${{ env.GENERATED_BINARY_NAME }}" | awk '{print $1}')
@@ -381,7 +380,7 @@ jobs:
           # Compare hashes. Explicit exit to be safe.
           # TODO: remove the builder as well.
           echo "$BUILDER_HASH $BUILDER_BINARY" | sha256sum --strict --check --status || exit -2
-    
+
           # Make the builder executable.
           chmod a+x "$BUILDER_BINARY"
 
@@ -411,4 +410,3 @@ jobs:
           path: "${{ steps.sign-prov.outputs.signed-provenance-name }}"
           if-no-files-found: error
           retention-days: 5
-
