@@ -40,11 +40,13 @@ type goReleaserConfigFile struct {
 	Ldflags []string `yaml:"ldflags"`
 	Binary  string   `yaml:"binary`
 	Version int      `yaml:"version"`
+	Main    string   `yaml:"main"`
 }
 
 type GoReleaserConfig struct {
 	Goos    string
 	Goarch  string
+	Main    string
 	Env     map[string]string
 	Flags   []string
 	Ldflags []string

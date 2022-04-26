@@ -234,11 +234,11 @@ func (b *GoBuild) generateOutputFilename() (string, error) {
 
 	var name string
 
-	// Replace .OS variable.
-	if strings.Contains(b.cfg.Binary, "{{ .OS }}") && b.cfg.Goos == "" {
+	// Replace .Os variable.
+	if strings.Contains(b.cfg.Binary, "{{ .Os }}") && b.cfg.Goos == "" {
 		return "", fmt.Errorf("%w", errorEnvVariableNameEmpty)
 	}
-	name = strings.ReplaceAll(b.cfg.Binary, "{{ .OS }}", b.cfg.Goos)
+	name = strings.ReplaceAll(b.cfg.Binary, "{{ .Os }}", b.cfg.Goos)
 
 	// Replace .Arch variable.
 	if strings.Contains(name, "{{ .Arch }}") && b.cfg.Goarch == "" {
@@ -302,7 +302,7 @@ func (b *GoBuild) generateLdflags() (string, error) {
 		ss := "{{ .Env."
 		es := "}}"
 		found := false
-		for true {
+		for {
 			start := strings.Index(v, ss)
 			if start == -1 {
 				break
@@ -331,7 +331,7 @@ func (b *GoBuild) generateLdflags() (string, error) {
 		a = append(a, res)
 	}
 	if len(a) > 0 {
-		return fmt.Sprintf("%s", strings.Join(a, " ")), nil
+		return strings.Join(a, " "), nil
 	}
 
 	return "", nil
