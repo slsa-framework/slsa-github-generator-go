@@ -15,18 +15,20 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 
+	// Enable the github OIDC auth provider.
+	_ "github.com/sigstore/cosign/pkg/providers/github"
+
 	"github.com/slsa-framework/slsa-github-generator-go/builder/pkg"
 )
 
 func usage(p string) {
-	panic(fmt.Sprintf(`Usage: 
+	panic(fmt.Sprintf(`Usage:
 	 %s build [--dry] slsa-releaser.yml
 	 %s provenance --binary-name $NAME --digest $DIGEST --command $COMMAND --env $ENV`, p, p))
 }
@@ -84,17 +86,12 @@ func main() {
 			usage(os.Args[0])
 		}
 
-		githubContext, ok := os.LookupEnv("GITHUB_CONTEXT")
-		if !ok {
-			panic(errors.New("environment variable GITHUB_CONTEXT not present"))
-		}
-
 		attBytes, err := pkg.GenerateProvenance(*provenanceName, *provenanceDigest,
-			githubContext, *provenanceCommand, *provenanceEnv)
+			*provenanceCommand, *provenanceEnv)
 		check(err)
 
 		filename := fmt.Sprintf("%s.intoto.jsonl", *provenanceName)
-		err = ioutil.WriteFile(filename, attBytes, 0o600)
+		err = ioutil.WriteFile(filename, attBytes, 0600)
 		check(err)
 
 		fmt.Printf("::set-output name=signed-provenance-name::%s\n", filename)
