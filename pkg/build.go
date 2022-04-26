@@ -106,8 +106,8 @@ func (b *GoBuild) Run(dry bool) error {
 			return err
 		}
 
-		// Set the filename last.
-		com := append(flags, []string{"-o", filename}...)
+		// Generate the command.
+		com := b.generateCommand(flags, filename)
 
 		// Share the resolved name of the binary.
 		fmt.Printf("::set-output name=go-binary-name::%s\n", filename)
@@ -140,13 +140,23 @@ func (b *GoBuild) Run(dry bool) error {
 		return fmt.Errorf("OUTPUT_BINARY not defined")
 	}
 
-	// Set the filename last.
-	command := append(flags, []string{"-o", binary}...)
+	// Generate the command.
+	command := b.generateCommand(flags, binary)
 
 	fmt.Println("binary", binary)
 	fmt.Println("command", command)
 	fmt.Println("env", envs)
 	return syscall.Exec(b.goc, command, envs)
+}
+
+func (b *GoBuild) generateCommand(flags []string, binary string) []string {
+	command := append(flags, []string{"-o", binary}...)
+
+	// Add the entry point.
+	if b.cfg.Main != nil {
+		command = append(command, *b.cfg.Main)
+	}
+	return command
 }
 
 func marshallList(args []string) (string, error) {
