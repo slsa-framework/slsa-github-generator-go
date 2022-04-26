@@ -244,11 +244,11 @@ func (b *GoBuild) generateOutputFilename() (string, error) {
 
 	var name string
 
-	// Replace .OS variable.
-	if strings.Contains(b.cfg.Binary, "{{ .OS }}") && b.cfg.Goos == "" {
+	// Replace .Os variable.
+	if strings.Contains(b.cfg.Binary, "{{ .Os }}") && b.cfg.Goos == "" {
 		return "", fmt.Errorf("%w", errorEnvVariableNameEmpty)
 	}
-	name = strings.ReplaceAll(b.cfg.Binary, "{{ .OS }}", b.cfg.Goos)
+	name = strings.ReplaceAll(b.cfg.Binary, "{{ .Os }}", b.cfg.Goos)
 
 	// Replace .Arch variable.
 	if strings.Contains(name, "{{ .Arch }}") && b.cfg.Goarch == "" {
