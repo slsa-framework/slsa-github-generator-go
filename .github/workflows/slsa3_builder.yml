@@ -51,6 +51,12 @@ on:
         value: ${{ jobs.build-dry.outputs.go-binary-name }}
 
 jobs:
+  test-bool:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') && inputs.upload-assets == 'true'
+    steps:
+      - run:
+        exit 1
   ###################################################################
   #                                                                 #
   #                       Build the builder                         #
