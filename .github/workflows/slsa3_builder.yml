@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/') && inputs.upload-assets == 'true'
     steps:
-      - run:
+      - run: |
         exit 1
   ###################################################################
   #                                                                 #
