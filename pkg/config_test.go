@@ -34,8 +34,18 @@ func Test_ConfigFromFile(t *testing.T) {
 		expected error
 	}{
 		{
-			name:     "valid releaser",
-			path:     "./testdata/releaser-valid.yml",
+			name:     "valid releaser empty main",
+			path:     "./testdata/releaser-valid-empty-main.yml",
+			expected: nil,
+		},
+		{
+			name:     "valid releaser no main",
+			path:     "./testdata/releaser-valid-no-main.yml",
+			expected: nil,
+		},
+		{
+			name:     "valid releaser main",
+			path:     "./testdata/releaser-valid-main.yml",
 			expected: nil,
 		},
 		{
@@ -52,6 +62,11 @@ func Test_ConfigFromFile(t *testing.T) {
 			name:     "invalid envs",
 			path:     "./testdata/releaser-invalid-envs.yml",
 			expected: errorInvalidEnvironmentVariable,
+		},
+		{
+			name:     "invalid main",
+			path:     "./testdata/releaser-invalid-main.yml",
+			expected: errorInvalidDirectory,
 		},
 	}
 	for _, tt := range tests {
