@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	intoto "github.com/in-toto/in-toto-golang/in_toto"
 	slsa02 "github.com/in-toto/in-toto-golang/in_toto/slsa_provenance/v0.2"
@@ -107,6 +108,16 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Set the architecture based on the runner. Architecture should be the
+	// same for the provenance step where this is run and the build step if the
+	// reusable workflow is used.
+	//
+	// NOTE: map is a reference so modifying invEnv modifies
+	// p.Predicate.Invocation.Environment.
+	invEnv := p.Predicate.Invocation.Environment.(map[string]interface{})
+	invEnv["arch"] = os.Getenv("RUNNER_ARCH")
+	invEnv["os"] = os.Getenv("ImageOS")
 
 	// Sign the provenance.
 	s := sigstore.NewDefaultSigner()

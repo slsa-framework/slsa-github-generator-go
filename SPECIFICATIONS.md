@@ -74,7 +74,7 @@ An example of the output provenance can be found the [README.md#example-provenan
 ### Interference between jobs
 Project maintainers are in charge of defining the workflows that release the build, so they could, in principle, try to define the workflow in a way that interferes with the builder. This would allow them to alter the provenance information. For example, [environment variables](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#env), [steps](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps), [services](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idservices) and [defaults](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#defaults), to name a few, are propagated to jobs defined in the workflow. 
 
-To avoid this problem, we use a special type of GitHub "action" called a [reusable workflow](https://docs.github.com/en/actions/using-workflows/reusing-workflow): they have many desirable properties, in that they avoid all the possible sources of interference listed above. The only way to interact with a reusable workflow is through the [input parameters]((https://docs.github.com/en/actions/using-workflows/reusing-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow)) it exposes to the calling workflow.
+To avoid this problem, we use a special type of GitHub "action" called a [reusable workflow](https://docs.github.com/en/actions/using-workflows/reusing-workflows): they have many desirable properties, in that they avoid all the possible sources of interference listed above. The only way to interact with a reusable workflow is through the [input parameters]((https://docs.github.com/en/actions/using-workflows/reusing-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow)) it exposes to the calling workflow.
 
 Below is an example of a reusable workflow called from an untrusted "caller workflow":
 ```yaml
@@ -94,7 +94,7 @@ jobs:
     // no env variables can be declared
 ```
 
-Below is an example of reusable workflow deifnition:
+Below is an example of reusable workflow definition:
 ```yaml
 // github.com/some/repo/.github./workflow/re-usable-workflow.yml
 name: reusable workflow (trusted builder)
@@ -213,11 +213,11 @@ Note that we rely on GitHub hosted runners executing the defined code to trust t
 
 Given an artifact and a signed provenance, we perform the following steps:
 
-1. **Download the certificate from the Rekor log**: Search the Rekor log by artifact hash to find the entry containing the signed provenance and extract the signing certificate. (See Rekor Log RT in Verification Latency for how this could be skipped).
+1. **Download the signing certificate from the Rekor log**: Search the Rekor log by artifact hash to find the entry containing the signed provenance and extract the signing certificate. (See Rekor Log RT in Verification Latency for how this could be skipped).
 
 2. **Verify the signed provenance**: Verify the signature in the DSSE payload using the signing certificate, and the chain of the signing certificate up to the Fulcio root CA. This verifies non-forgeability of the payload and establishes trust in the contents of the certificate.
 
-3. **Extract the builder identity from the signing certificate**: Extract certificate information (see [here](https://github.com/sigstore/fulcio/blob/c74e2cfb763dd32def5dc921ff49f579fa262d96/docs/oid-info.md#136141572641--fulcio) for extension OIDs). Verify that the signing certificate’s subject name (job_workflow_ref) is the trusted builder ID at a trusted hash (repository SHA in the diagram below). This verifies authenticity of the provenance and guarantees the provenance was correctly populated.
+3. **Extract the builder identity from the signing certificate**: Extract certificate information (see [here](https://github.com/sigstore/fulcio/blob/c74e2cfb763dd32def5dc921ff49f579fa262d96/docs/oid-info.md#136141572641--fulcio) for extension OIDs). Verify that the signing certificate’s subject name (job_workflow_ref) is the trusted builder ID at a trusted hash (calling repository SHA in the diagram below). This verifies authenticity of the provenance and guarantees the provenance was correctly populated.
 
 <img src="images/cert.svg" width="70%" height="70%">
 
