@@ -1,7 +1,6 @@
 name: Go push main
 
 on: 
-  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -33,7 +32,7 @@ jobs:
     steps:
       - run: |
 
-        #TODO: slsa-verifier and create issue if failure
+        #TODO: slsa-verifier for all existing releases, and create issue if failure
         echo "it worked"
 
   verify-assets:
