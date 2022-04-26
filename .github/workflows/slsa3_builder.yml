@@ -468,9 +468,10 @@ jobs:
 
           # Compare hashes. Explicit exit to be safe.
           echo "$UNTRUSTED_PROVENANCE_HASH $UNTRUSTED_PROVENANCE_NAME" | sha256sum --strict --check --status || exit -2
+      
       - run: |
-        echo ${{ needs.build-dry.outputs.go-binary-name }}
-        echo ${{ needs.provenance.outputs.go-provenance-name }}
+          echo "${{ needs.build-dry.outputs.go-binary-name }}""
+          echo "${{ needs.provenance.outputs.go-provenance-name }}"
 
       - name: Release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
