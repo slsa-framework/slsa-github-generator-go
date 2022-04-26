@@ -103,6 +103,7 @@ func validateMain(cf *goReleaserConfigFile) error {
 		return nil
 	}
 
+	// Validate the main path is under the current directory.
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
