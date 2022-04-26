@@ -214,7 +214,7 @@ func Test_generateOutputFilename(t *testing.T) {
 		},
 		{
 			name:     "filename os",
-			filename: "name-{{ .OS }}",
+			filename: "name-{{ .Os }}",
 			expected: struct {
 				err error
 				fn  string
@@ -234,7 +234,7 @@ func Test_generateOutputFilename(t *testing.T) {
 		},
 		{
 			name:     "filename os",
-			filename: "name-{{ .OS }}",
+			filename: "name-{{ .Os }}",
 			expected: struct {
 				err error
 				fn  string
@@ -244,7 +244,7 @@ func Test_generateOutputFilename(t *testing.T) {
 		},
 		{
 			name:     "filename linux os",
-			filename: "name-{{ .OS }}",
+			filename: "name-{{ .Os }}",
 			goos:     "linux",
 			expected: struct {
 				err error
@@ -268,7 +268,7 @@ func Test_generateOutputFilename(t *testing.T) {
 		},
 		{
 			name:     "filename amd64/linux arch",
-			filename: "name-{{ .OS }}-{{ .Arch }}",
+			filename: "name-{{ .Os }}-{{ .Arch }}",
 			goarch:   "amd64",
 			goos:     "linux",
 			expected: struct {
