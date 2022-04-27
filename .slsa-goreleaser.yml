@@ -1,0 +1,14 @@
+# Used for e2e tests.
+#TODO: update with various config parameters.
+version: 1
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+
+flags:
+  - -trimpath
+  - -tags=netgo
+
+goos: linux
+goarch: amd64
+binary: binary-{{ .Os }}-{{ .Arch }}
