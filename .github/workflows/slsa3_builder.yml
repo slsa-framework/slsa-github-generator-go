@@ -79,9 +79,9 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             echo "exit early"
             echo "repo: $PULL_REQUEST_REPOSITORY"
-            echo "ref: $GITHUB_REF_NAME"
+            echo "ref: $GITHUB_HEAD_REF"
             echo "::set-output name=builder_repo::$PULL_REQUEST_REPOSITORY"
-            echo "::set-output name=builder_ref::$GITHUB_REF_NAME"
+            echo "::set-output name=builder_ref::$GITHUB_HEAD_REF"
             exit 0
           fi
 
