@@ -74,7 +74,10 @@ jobs:
         shell: bash
         run: |
           # On pull requests, permissions are not available.
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            echo "exit early"
+            echo "repo: $GITHUB_REPOSITORY"
+            echo "ref: $GITHUB_REF_NAME"
             echo "::set-output name=builder_repo::$GITHUB_REPOSITORY"
             echo "::set-output name=builder_ref::$GITHUB_REF_NAME"
             exit 0
