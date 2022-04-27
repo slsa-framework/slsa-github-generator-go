@@ -43,4 +43,5 @@ jobs:
       - run: |
 
         #TODO: verify no assest were created.
+        # Note: on a push event there's nothing to verify.
         echo "it worked"
