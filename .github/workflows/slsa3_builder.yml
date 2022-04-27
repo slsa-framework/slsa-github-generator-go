@@ -41,6 +41,11 @@ on:
         required: false
         type: boolean
         default: true
+      config-file:
+        description: "The configuration file defining the builds"
+        required: false
+        type: string
+        default: "${{ env.RELEASER_CONFIG }}"
       env:
         description: "Env variables to pass to the builder"
         required: false
@@ -202,7 +207,7 @@ jobs:
         shell: bash
         env:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
-          CONFIG_FILE: "${{ env.RELEASER_CONFIG }}"
+          CONFIG_FILE: "${{ inputs.upload-assets }}"
           UNTRUSTED_ENVS: "${{ inputs.env }}"
           UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
@@ -278,7 +283,7 @@ jobs:
         shell: bash
         env:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
-          CONFIG_FILE: "${{ env.RELEASER_CONFIG }}"
+          CONFIG_FILE: "${{ inputs.upload-assets }}"
           UNTRUSTED_ENVS: "${{ inputs.env }}"
           UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
