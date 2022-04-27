@@ -22,26 +22,23 @@ jobs:
     if: always() && (needs.build.result == 'failure')
     steps:
       - run: |
-
-        #TODO: create issue on the repo about the failure.
-        echo "it failed"
-        exit 1
+          #TODO: create issue on the repo about the failure.
+          echo "it failed"
+          exit 1
 
   verify-provenance:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - run: |
-
-        #TODO: slsa-verifier for all existing releases, and create issue if failure.
-        echo "it worked"
-
+          #TODO: slsa-verifier for all existing releases, and create issue if failure.
+          echo "it worked"
+ 
   verify-assets:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - run: |
-
-        #TODO: verify no assest were created.
-        # Note: on a push event there's nothing to verify.
-        echo "it worked"
+          #TODO: verify no assest were created.
+          # Note: on a push event there's nothing to verify.
+          echo "it worked" 
