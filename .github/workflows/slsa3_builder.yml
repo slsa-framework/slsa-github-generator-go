@@ -71,14 +71,16 @@ jobs:
     steps:
       - name: Detect the builder ref
         id: detect
+        env:
+          PULL_REQUEST_REPOSITORY: "${{ github.event.pull_request.head.repo.full_name }}"
         shell: bash
         run: |
           # On pull requests, permissions are not available.
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             echo "exit early"
-            echo "repo: $GITHUB_REPOSITORY"
+            echo "repo: $PULL_REQUEST_REPOSITORY"
             echo "ref: $GITHUB_REF_NAME"
-            echo "::set-output name=builder_repo::$GITHUB_REPOSITORY"
+            echo "::set-output name=builder_repo::$PULL_REQUEST_REPOSITORY"
             echo "::set-output name=builder_ref::$GITHUB_REF_NAME"
             exit 0
           fi
