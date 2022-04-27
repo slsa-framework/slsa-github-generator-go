@@ -7,6 +7,7 @@ on:
 permissions: read-all
 
 jobs:
+  #TODO: support multiple config files.
   build:
     permissions:
       id-token: write # For signing.
@@ -22,7 +23,7 @@ jobs:
     steps:
       - run: |
 
-        #TODO: create issue on the repo about the failure
+        #TODO: create issue on the repo about the failure.
         echo "it failed"
         exit 1
 
@@ -32,7 +33,7 @@ jobs:
     steps:
       - run: |
 
-        #TODO: slsa-verifier for all existing releases, and create issue if failure
+        #TODO: slsa-verifier for all existing releases, and create issue if failure.
         echo "it worked"
 
   verify-assets:
@@ -41,5 +42,5 @@ jobs:
     steps:
       - run: |
 
-        #TODO: verify no assest were created
+        #TODO: verify no assest were created.
         echo "it worked"
