@@ -1,10 +1,10 @@
-name: Pre submits
+name: Go Pre submits - Unit tests
 on: [pull_request, workflow_dispatch]
 
 permissions: read-all
 
 jobs:
-  pre-submit:
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -1,0 +1,26 @@
+
+name: Go Pre submits - E2e tests
+on: 
+  pull_request:
+    branches: [ main ]
+
+permissions: read-all
+
+jobs:
+  #TODO: support multiple config files.
+  build:
+    permissions:
+      id-token: write # For signing.
+      contents: write # For asset uploads.
+    uses: ./.github/workflows/slsa3_builder.yml
+    with:
+      go-version: 1.17
+
+  verify-provenance:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: |
+        #TODO: slsa-verifier for all existing releases, and create issue if failure.
+        echo "it worked"
+  
