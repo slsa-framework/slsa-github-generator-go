@@ -136,8 +136,11 @@ flags:
 goos: linux # same values as GOOS env variable.
 goarch: amd64 # same values as GOARCH env variable.
 
+# Entrypoint to compile. Default is the root directory.
+# main: ./path/to/main.go
+
 # Binary name.
-# {{ .OS }} will be replaced by goos field in the config file.
+# {{ .Os }} will be replaced by goos field in the config file.
 # {{ .Arch }} will be replaced by goarch field in the config file.
 binary: binary-{{ .OS }}-{{ .Arch }}
 
