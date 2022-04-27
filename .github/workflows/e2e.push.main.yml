@@ -23,8 +23,7 @@ jobs:
     steps:
       - run: |
           #TODO: create issue on the repo about the failure.
-          echo "it failed"
-          exit 1
+          echo "build failed"
 
   verify-provenance:
     runs-on: ubuntu-latest
