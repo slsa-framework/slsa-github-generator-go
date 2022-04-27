@@ -8,13 +8,14 @@ permissions: read-all
 
 jobs:
   #TODO: support multiple config files.
+  #TODO: support >1 go version (1.18 and ?).
   build:
     permissions:
       id-token: write # For signing.
       contents: write # For asset uploads.
     uses: slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@main
     with:
-      go-version: 1.17
+      go-version: 1.18
 
   run-if-failed:
     runs-on: ubuntu-latest
