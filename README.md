@@ -192,7 +192,7 @@ jobs:
   build:
     permissions:
       id-token: write
-      contents: read
+      contents: write
     needs: args
     uses: slsa-framework/slsa-github-generator-go/.github/workflows/slsa3_builder.yml@main # TODO: use hash upon release.
     with:
