@@ -124,6 +124,11 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 	p.Predicate.Materials = append(p.Predicate.Materials, runnerMaterials)
 
+	if isPullRequestTrigger() {
+		fmt.Println("pull_request event detected. Skipping signing.")
+		return marshallToBytes(*p)
+	}
+
 	// Sign the provenance.
 	s := sigstore.NewDefaultSigner()
 	att, err := s.Sign(ctx, p)
@@ -137,4 +142,8 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 
 	return att.Bytes(), nil
+}
+
+func isPullRequestTrigger() bool {
+	return (os.Getenv("GITHUB_EVENT_NAME") == "pull_request")
 }
