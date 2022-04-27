@@ -15,8 +15,11 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -95,8 +98,27 @@ func main() {
 		check(err)
 
 		fmt.Printf("::set-output name=signed-provenance-name::%s\n", filename)
+
+		h, err := computeSHA256(filename)
+		check(err)
+		fmt.Printf("::set-output name=signed-provenance-sha256::%s\n", h)
+
 	default:
 		fmt.Println("expected 'build' or 'provenance' subcommands")
 		os.Exit(1)
 	}
+}
+
+func computeSHA256(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
