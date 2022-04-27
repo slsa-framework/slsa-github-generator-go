@@ -21,6 +21,6 @@ jobs:
     needs: build
     steps:
       - run: |
-        #TODO: slsa-verifier for all existing releases, and create issue if failure.
-        echo "it worked"
+          #TODO: slsa-verifier for all existing releases, and create issue if failure.
+          echo "it worked"
   
