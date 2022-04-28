@@ -45,8 +45,8 @@ on:
         required: false
         type: string
         default: ".slsa-goreleaser.yml"
-      env:
-        description: "Env variables to pass to the builder"
+      evaluated-envs:
+        description: "Evaluated env variables to pass to the builder"
         required: false
         type: string
     outputs:
@@ -207,7 +207,7 @@ jobs:
         env:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
           CONFIG_FILE: "${{ inputs.config-file }}"
-          UNTRUSTED_ENVS: "${{ inputs.env }}"
+          UNTRUSTED_ENVS: "${{ inputs.evaluated-envs }}"
           UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
           set -euo pipefail
@@ -283,7 +283,7 @@ jobs:
         env:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
           CONFIG_FILE: "${{ inputs.config-file }}"
-          UNTRUSTED_ENVS: "${{ inputs.env }}"
+          UNTRUSTED_ENVS: "${{ inputs.evaluated-envs }}"
           UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
           set -euo pipefail
