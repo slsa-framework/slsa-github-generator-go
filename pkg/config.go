@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -27,7 +26,6 @@ import (
 var (
 	errorInvalidEnvironmentVariable = errors.New("invalid environment variable")
 	errorUnsupportedVersion         = errors.New("version not supported")
-	errorInvalidDirectory           = errors.New("invalid directory")
 )
 
 var supportedVersions = map[int]bool{
@@ -65,6 +63,10 @@ func configFromString(b []byte) (*GoReleaserConfig, error) {
 }
 
 func ConfigFromFile(pathfn string) (*GoReleaserConfig, error) {
+	if err := validatePath(pathfn); err != nil {
+		return nil, err
+	}
+
 	cfg, err := os.ReadFile(pathfn)
 	if err != nil {
 		return nil, fmt.Errorf("os.ReadFile: %w", err)
@@ -98,27 +100,17 @@ func fromConfig(cf *goReleaserConfigFile) (*GoReleaserConfig, error) {
 	return &cfg, nil
 }
 
+func validatePath(path string) error {
+	return isUnderWD(path)
+}
+
 func validateMain(cf *goReleaserConfigFile) error {
 	if cf.Main == nil {
 		return nil
 	}
 
 	// Validate the main path is under the current directory.
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	p, err := filepath.Abs(*cf.Main)
-	if err != nil {
-		return err
-	}
-
-	if !strings.HasPrefix(p, wd+"/") {
-		return errorInvalidDirectory
-	}
-
-	return nil
+	return isUnderWD(*cf.Main)
 }
 
 func validateVersion(cf *goReleaserConfigFile) error {
