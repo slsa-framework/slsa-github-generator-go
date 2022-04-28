@@ -41,7 +41,7 @@ on:
         type: boolean
         default: true
       config-file:
-        description: "The configuration file defining the builds"
+        description: "The configuration file for the builder. A path within the calling repository."
         required: false
         type: string
         default: ".slsa-goreleaser.yml"
