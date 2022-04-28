@@ -49,6 +49,11 @@ func Test_ConfigFromFile(t *testing.T) {
 			expected: nil,
 		},
 		{
+			name:     "valid releaser main with parent path",
+			path:     "../pkg/testdata/releaser-valid-main.yml",
+			expected: nil,
+		},
+		{
 			name:     "missing version",
 			path:     "./testdata/releaser-noversion.yml",
 			expected: errorUnsupportedVersion,
@@ -66,6 +71,11 @@ func Test_ConfigFromFile(t *testing.T) {
 		{
 			name:     "invalid main",
 			path:     "./testdata/releaser-invalid-main.yml",
+			expected: errorInvalidDirectory,
+		},
+		{
+			name:     "invalid path",
+			path:     "../testdata/releaser-invalid-main.yml",
 			expected: errorInvalidDirectory,
 		},
 	}
