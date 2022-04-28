@@ -19,7 +19,6 @@ permissions:
 
 env:
   # Project.
-  RELEASER_CONFIG: .slsa-goreleaser.yml
   GENERATED_BINARY_NAME: compiled-binary
   # Builder
   BUILDER_BINARY: builder
@@ -45,7 +44,7 @@ on:
         description: "The configuration file defining the builds"
         required: false
         type: string
-        default: "${{ env.RELEASER_CONFIG }}"
+        default: ".slsa-goreleaser.yml"
       env:
         description: "Env variables to pass to the builder"
         required: false
