@@ -119,6 +119,13 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	invEnv["arch"] = os.Getenv("RUNNER_ARCH")
 	invEnv["os"] = os.Getenv("ImageOS")
 
+	// Add details about the runner's OS to the materials
+	runnerMaterials := slsa02.ProvenanceMaterial{
+		// TODO: capture the digest here too
+		URI: fmt.Sprintf("https://github.com/actions/virtual-environments/releases/tag/%s/%s", os.Getenv("ImageOS"), os.Getenv("ImageVersion")),
+	}
+	p.Predicate.Materials = append(p.Predicate.Materials, runnerMaterials)
+
 	// Sign the provenance.
 	s := sigstore.NewDefaultSigner()
 	att, err := s.Sign(ctx, p)
