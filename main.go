@@ -89,7 +89,7 @@ func main() {
 			usage(os.Args[0])
 		}
 
-		attBytes, err := pkg.GenerateProvenance(*provenanceName, *provenanceDigest,
+		attBytes, logRef, err := pkg.GenerateProvenance(*provenanceName, *provenanceDigest,
 			*provenanceCommand, *provenanceEnv)
 		check(err)
 
@@ -102,6 +102,8 @@ func main() {
 		h, err := computeSHA256(filename)
 		check(err)
 		fmt.Printf("::set-output name=signed-provenance-sha256::%s\n", h)
+
+		fmt.Printf("transparency log entry created at index: %s\n", logRef)
 
 	default:
 		fmt.Println("expected 'build' or 'provenance' subcommands")

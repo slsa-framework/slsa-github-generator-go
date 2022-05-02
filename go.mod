@@ -9,10 +9,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
-require (
-	github.com/sigstore/sigstore v1.2.0 // indirect
-	github.com/slsa-framework/slsa-github-generator v0.0.0-20220418072137-6847f817dbea
-)
+require github.com/sigstore/sigstore v1.2.0 // indirect
 
 require (
 	cloud.google.com/go v0.100.2 // indirect
@@ -212,6 +209,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.3.1 // indirect
 	github.com/shibumi/go-pathspec v1.3.0 // indirect
+	github.com/slsa-framework/slsa-github-generator v0.0.0-20220502162902-21a1e396c486 // indirect
 	golang.org/x/crypto v0.0.0-20220213190939-1e6e3497d506 // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect

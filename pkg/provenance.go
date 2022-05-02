@@ -52,29 +52,30 @@ type (
 // GenerateProvenance translates github context into a SLSA provenance
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.2
-func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
+// Returns the SLSA provenance statement, and a string containing log reference information
+func GenerateProvenance(name, digest, command, envs string) ([]byte, string, error) {
 	gh, err := github.GetWorkflowContext()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if _, err := hex.DecodeString(digest); err != nil || len(digest) != 64 {
-		return nil, fmt.Errorf("sha256 digest is not valid: %s", digest)
+		return nil, "", fmt.Errorf("sha256 digest is not valid: %s", digest)
 	}
 
 	com, err := unmarshallList(command)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	env, err := unmarshallList(envs)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	c, err := github.NewOIDCClient()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// Generate a basic WorkflowRun for our subject based on the github
@@ -106,7 +107,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	ctx := context.Background()
 	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// Set the architecture based on the runner. Architecture should be the
@@ -130,15 +131,21 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	s := sigstore.NewDefaultSigner()
 	att, err := s.Sign(ctx, p)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// Upload the signed attestation to recor.
-	if err := s.Upload(ctx, att); err != nil {
-		return nil, err
+	logEntry, err := s.Upload(ctx, att)
+	if err != nil {
+		return nil, "", err
 	}
 
-	return att.Bytes(), nil
+	if logEntry.LogIndex == nil || logEntry.LogID == nil {
+		return nil, "", fmt.Errorf("logEntry fields not present for tlog upload")
+	}
+	logRef := fmt.Sprintf("index:%d, logID:%s", *logEntry.LogIndex, *logEntry.LogID)
+
+	return att.Bytes(), logRef, nil
 }
 
 func unmarshallList(arg string) ([]string, error) {
