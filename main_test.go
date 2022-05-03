@@ -18,10 +18,6 @@ func errCmp(e1, e2 error) bool {
 	return errors.Is(e1, e2) || errors.Is(e2, e1)
 }
 
-func pString(s string) *string {
-	return &s
-}
-
 func Test_runVerify(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
