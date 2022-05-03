@@ -580,129 +580,86 @@ func Test_generateLdflags(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name     string
-		argEnv   string
-		ldflags  []string
-		expected struct {
-			err     error
-			ldflags string
-		}
+		name       string
+		argEnv     string
+		inldflags  []string
+		err        error
+		outldflags []string
 	}{
 		{
-			name:    "version ldflags",
-			argEnv:  "VERSION_LDFLAGS:value1",
-			ldflags: []string{"{{ .Env.VERSION_LDFLAGS }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "value1",
-				err:     nil,
-			},
+			name:       "version ldflags",
+			argEnv:     "VERSION_LDFLAGS:value1",
+			inldflags:  []string{"{{ .Env.VERSION_LDFLAGS }}"},
+			outldflags: []string{"value1"},
 		},
 		{
-			name:    "one value with text",
-			argEnv:  "VAR1:value1, VAR2:value2",
-			ldflags: []string{"name-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "name-value1",
-				err:     nil,
-			},
+			name:       "one value with text",
+			argEnv:     "VAR1:value1, VAR2:value2",
+			inldflags:  []string{"name-{{ .Env.VAR1 }}"},
+			outldflags: []string{"name-value1"},
 		},
 		{
-			name:    "two values with text",
-			argEnv:  "VAR1:value1, VAR2:value2",
-			ldflags: []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "name-value1-value2",
-				err:     nil,
-			},
+			name:       "two values with text",
+			argEnv:     "VAR1:value1, VAR2:value2",
+			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
+			outldflags: []string{"name-value1-value2"},
 		},
 		{
-			name:    "two values with text and not space between env",
-			argEnv:  "VAR1:value1,VAR2:value2",
-			ldflags: []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "name-value1-value2",
-				err:     nil,
-			},
+			name:       "two values with text and not space between env",
+			argEnv:     "VAR1:value1,VAR2:value2",
+			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
+			outldflags: []string{"name-value1-value2"},
 		},
 		{
-			name:    "same two values with text",
-			argEnv:  "VAR1:value1, VAR2:value2",
-			ldflags: []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "name-value1-value1",
-				err:     nil,
-			},
+			name:       "same two values with text",
+			argEnv:     "VAR1:value1, VAR2:value2",
+			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR1 }}"},
+			outldflags: []string{"name-value1-value1"},
 		},
 		{
-			name:    "same value extremeties",
-			argEnv:  "VAR1:value1, VAR2:value2",
-			ldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "value1-name-value1",
-				err:     nil,
-			},
+			name:       "same value extremeties",
+			argEnv:     "VAR1:value1, VAR2:value2",
+			inldflags:  []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
+			outldflags: []string{"value1-name-value1"},
 		},
 		{
-			name:    "two different value extremeties",
-			argEnv:  "VAR1:value1, VAR2:value2",
-			ldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR2 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				ldflags: "value1-name-value2",
-				err:     nil,
-			},
+			name:       "two different value extremeties",
+			argEnv:     "VAR1:value1, VAR2:value2",
+			inldflags:  []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR2 }}"},
+			outldflags: []string{"value1-name-value2"},
 		},
 		{
-			name:    "undefined env variable",
-			argEnv:  "VAR2:value2",
-			ldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				err: errorEnvVariableNameEmpty,
-			},
+			name:      "undefined env variable",
+			argEnv:    "VAR2:value2",
+			inldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
+			err:       errorEnvVariableNameEmpty,
 		},
 		{
-			name:    "undefined env variable 1",
-			argEnv:  "VAR2:value2",
-			ldflags: []string{"{{ .Env.VAR2 }}-name-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				err: errorEnvVariableNameEmpty,
-			},
+			name:      "undefined env variable 1",
+			argEnv:    "VAR2:value2",
+			inldflags: []string{"{{ .Env.VAR2 }}-name-{{ .Env.VAR1 }}"},
+			err:       errorEnvVariableNameEmpty,
 		},
 		{
-			name:    "empty env variable",
-			argEnv:  "",
-			ldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
-			expected: struct {
-				err     error
-				ldflags string
-			}{
-				err: errorEnvVariableNameEmpty,
+			name:      "empty env variable",
+			argEnv:    "",
+			inldflags: []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
+			err:       errorEnvVariableNameEmpty,
+		},
+		{
+			name:   "several ldflags",
+			argEnv: "VAR1:value1, VAR2:value2, VAR3:value3",
+			inldflags: []string{
+				"{{ .Env.VAR1 }}-name-{{ .Env.VAR2 }}",
+				"{{ .Env.VAR1 }}-name-{{ .Env.VAR3 }}",
+				"{{ .Env.VAR3 }}-name-{{ .Env.VAR1 }}",
+				"{{ .Env.VAR3 }}-name-{{ .Env.VAR2 }}",
+			},
+			outldflags: []string{
+				"value1-name-value2",
+				"value1-name-value3",
+				"value3-name-value1",
+				"value3-name-value2",
 			},
 		},
 	}
@@ -714,7 +671,7 @@ func Test_generateLdflags(t *testing.T) {
 
 			cfg := goReleaserConfigFile{
 				Version: 1,
-				Ldflags: tt.ldflags,
+				Ldflags: tt.inldflags,
 			}
 			c, err := fromConfig(&cfg)
 			if err != nil {
@@ -728,15 +685,19 @@ func Test_generateLdflags(t *testing.T) {
 			}
 			ldflags, err := b.generateLdflags()
 
-			if !errCmp(err, tt.expected.err) {
-				t.Errorf(cmp.Diff(err, tt.expected.err))
+			if !errCmp(err, tt.err) {
+				t.Errorf(cmp.Diff(err, tt.err))
 			}
 			if err != nil {
 				return
 			}
 			// Note: generated env variables contain the process's env variables too.
-			if !cmp.Equal(ldflags, tt.expected.ldflags) {
-				t.Errorf(cmp.Diff(ldflags, tt.expected.ldflags))
+			var expected []string
+			for _, v := range tt.outldflags {
+				expected = append(expected, fmt.Sprintf("-ldflags=%s", v))
+			}
+			if !cmp.Equal(ldflags, expected) {
+				t.Errorf(cmp.Diff(ldflags, expected))
 			}
 		})
 	}

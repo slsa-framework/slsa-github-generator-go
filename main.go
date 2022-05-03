@@ -16,7 +16,9 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -38,8 +40,81 @@ func usage(p string) {
 
 func check(e error) {
 	if e != nil {
-		panic(e)
+		fmt.Fprintf(os.Stderr, e.Error())
+		os.Exit(1)
 	}
+}
+
+func runBuild(dry bool, configFile, evalEnvs string) error {
+	goc, err := exec.LookPath("go")
+	if err != nil {
+		return err
+	}
+
+	cfg, err := pkg.ConfigFromFile(configFile)
+	if err != nil {
+		return err
+	}
+	fmt.Println(cfg)
+
+	gobuild := pkg.GoBuildNew(goc, cfg)
+
+	// Set env variables encoded as arguments.
+	err = gobuild.SetArgEnvVariables(evalEnvs)
+	if err != nil {
+		return err
+	}
+
+	err = gobuild.Run(dry)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func unmarshallList(arg string) ([]string, error) {
+	var res []string
+	// If argument is empty, return an empty list early,
+	// because `json.Unmarshal` would fail.
+	if arg == "" {
+		return res, nil
+	}
+
+	cs, err := base64.StdEncoding.DecodeString(arg)
+	if err != nil {
+		return res, fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
+	}
+
+	if err := json.Unmarshal(cs, &res); err != nil {
+		return []string{}, fmt.Errorf("json.Unmarshal: %w", err)
+	}
+	return res, nil
+}
+
+func runProvenanceGeneration(subject, digest, commands, envs string) error {
+	attBytes, err := pkg.GenerateProvenance(subject, digest,
+		commands, envs)
+	if err != nil {
+		return err
+	}
+
+	filename := fmt.Sprintf("%s.intoto.jsonl", subject)
+	err = ioutil.WriteFile(filename, attBytes, 0600)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("::set-output name=signed-provenance-name::%s\n", filename)
+
+	h, err := computeSHA256(filename)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("::set-output name=signed-provenance-sha256::%s\n", h)
+
+	return nil
 }
 
 func main() {
@@ -65,22 +140,12 @@ func main() {
 		if len(buildCmd.Args()) < 1 {
 			usage(os.Args[0])
 		}
+		configFile := buildCmd.Args()[0]
+		evaluatedEnvs := buildCmd.Args()[1]
 
-		goc, err := exec.LookPath("go")
+		err := runBuild(*buildDry, configFile, evaluatedEnvs)
 		check(err)
 
-		cfg, err := pkg.ConfigFromFile(buildCmd.Args()[0])
-		check(err)
-		fmt.Println(cfg)
-
-		gobuild := pkg.GoBuildNew(goc, cfg)
-
-		// Set env variables encoded as arguments.
-		err = gobuild.SetArgEnvVariables(buildCmd.Args()[1])
-		check(err)
-
-		err = gobuild.Run(*buildDry)
-		check(err)
 	case provenanceCmd.Name():
 		provenanceCmd.Parse(os.Args[2:])
 		// Note: *provenanceEnv may be empty.
@@ -89,19 +154,9 @@ func main() {
 			usage(os.Args[0])
 		}
 
-		attBytes, err := pkg.GenerateProvenance(*provenanceName, *provenanceDigest,
+		err := runProvenanceGeneration(*provenanceName, *provenanceDigest,
 			*provenanceCommand, *provenanceEnv)
 		check(err)
-
-		filename := fmt.Sprintf("%s.intoto.jsonl", *provenanceName)
-		err = ioutil.WriteFile(filename, attBytes, 0600)
-		check(err)
-
-		fmt.Printf("::set-output name=signed-provenance-name::%s\n", filename)
-
-		h, err := computeSHA256(filename)
-		check(err)
-		fmt.Printf("::set-output name=signed-provenance-sha256::%s\n", h)
 
 	default:
 		fmt.Println("expected 'build' or 'provenance' subcommands")
