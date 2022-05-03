@@ -1,4 +1,4 @@
-module github.com/slsa-framework/slsa-github-generator-go/builder
+module github.com/slsa-framework/slsa-github-generator-go
 
 go 1.18
 
@@ -6,13 +6,12 @@ require (
 	github.com/google/go-cmp v0.5.8
 	github.com/in-toto/in-toto-golang v0.3.4-0.20211211042327-af1f9fb822bf
 	github.com/sigstore/cosign v1.7.2
-	github.com/slsa-framework/slsa-verifier v0.0.0-20220429212034-6600fc362326
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
 	github.com/sigstore/sigstore v1.2.1-0.20220401110139-0e610e39782f // indirect
-	github.com/slsa-framework/slsa-github-generator v0.0.0-20220418072137-6847f817dbea
+	github.com/slsa-framework/slsa-github-generator v0.0.0-20220503134855-4d7fc17e9ddf
 )
 
 require (
@@ -210,7 +209,6 @@ require (
 )
 
 require (
-	github.com/docker/go v1.5.1-1 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/googleapis/go-type-adapters v1.0.0 // indirect
 	github.com/letsencrypt/boulder v0.0.0-20220331220046-b23ab962616e // indirect

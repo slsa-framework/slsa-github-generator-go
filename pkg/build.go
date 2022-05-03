@@ -90,7 +90,7 @@ func (b *GoBuild) Run(dry bool) error {
 
 	// Add ldflags.
 	if len(ldflags) > 0 {
-		flags = append(flags, ldflags...)
+		flags = append(flags, fmt.Sprintf("-ldflags=%s", ldflags))
 	}
 
 	// A dry run prints the information that is trusted, before
@@ -304,8 +304,8 @@ func isAllowedEnvVariable(name string) bool {
 }
 
 // TODO: maybe not needed if handled directly by go compiler.
-func (b *GoBuild) generateLdflags() ([]string, error) {
-	var ldflags []string
+func (b *GoBuild) generateLdflags() (string, error) {
+	var a []string
 
 	for _, v := range b.cfg.Ldflags {
 		var res string
@@ -319,17 +319,17 @@ func (b *GoBuild) generateLdflags() ([]string, error) {
 			}
 			end := strings.Index(string(v[start+len(ss):]), es)
 			if end == -1 {
-				return []string{}, fmt.Errorf("%w: %s", errorInvalidEnvArgument, v)
+				return "", fmt.Errorf("%w: %s", errorInvalidEnvArgument, v)
 			}
 
 			name := strings.Trim(string(v[start+len(ss):start+len(ss)+end]), " ")
 			if name == "" {
-				return []string{}, fmt.Errorf("%w: %s", errorEnvVariableNameEmpty, v)
+				return "", fmt.Errorf("%w: %s", errorEnvVariableNameEmpty, v)
 			}
 
 			val, exists := b.argEnv[name]
 			if !exists {
-				return []string{}, fmt.Errorf("%w: %s", errorEnvVariableNameEmpty, name)
+				return "", fmt.Errorf("%w: %s", errorEnvVariableNameEmpty, name)
 			}
 			res = fmt.Sprintf("%s%s%s", res, v[:start], val)
 			found = true
@@ -338,8 +338,11 @@ func (b *GoBuild) generateLdflags() ([]string, error) {
 		if !found {
 			res = v
 		}
-		ldflags = append(ldflags, fmt.Sprintf("-ldflags=%s", res))
+		a = append(a, res)
+	}
+	if len(a) > 0 {
+		return strings.Join(a, " "), nil
 	}
 
-	return ldflags, nil
+	return "", nil
 }

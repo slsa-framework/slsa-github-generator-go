@@ -584,49 +584,49 @@ func Test_generateLdflags(t *testing.T) {
 		argEnv     string
 		inldflags  []string
 		err        error
-		outldflags []string
+		outldflags string
 	}{
 		{
 			name:       "version ldflags",
 			argEnv:     "VERSION_LDFLAGS:value1",
 			inldflags:  []string{"{{ .Env.VERSION_LDFLAGS }}"},
-			outldflags: []string{"value1"},
+			outldflags: "value1",
 		},
 		{
 			name:       "one value with text",
 			argEnv:     "VAR1:value1, VAR2:value2",
 			inldflags:  []string{"name-{{ .Env.VAR1 }}"},
-			outldflags: []string{"name-value1"},
+			outldflags: "name-value1",
 		},
 		{
 			name:       "two values with text",
 			argEnv:     "VAR1:value1, VAR2:value2",
 			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
-			outldflags: []string{"name-value1-value2"},
+			outldflags: "name-value1-value2",
 		},
 		{
 			name:       "two values with text and not space between env",
 			argEnv:     "VAR1:value1,VAR2:value2",
 			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR2 }}"},
-			outldflags: []string{"name-value1-value2"},
+			outldflags: "name-value1-value2",
 		},
 		{
 			name:       "same two values with text",
 			argEnv:     "VAR1:value1, VAR2:value2",
 			inldflags:  []string{"name-{{ .Env.VAR1 }}-{{ .Env.VAR1 }}"},
-			outldflags: []string{"name-value1-value1"},
+			outldflags: "name-value1-value1",
 		},
 		{
 			name:       "same value extremeties",
 			argEnv:     "VAR1:value1, VAR2:value2",
 			inldflags:  []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR1 }}"},
-			outldflags: []string{"value1-name-value1"},
+			outldflags: "value1-name-value1",
 		},
 		{
 			name:       "two different value extremeties",
 			argEnv:     "VAR1:value1, VAR2:value2",
 			inldflags:  []string{"{{ .Env.VAR1 }}-name-{{ .Env.VAR2 }}"},
-			outldflags: []string{"value1-name-value2"},
+			outldflags: "value1-name-value2",
 		},
 		{
 			name:      "undefined env variable",
@@ -655,12 +655,7 @@ func Test_generateLdflags(t *testing.T) {
 				"{{ .Env.VAR3 }}-name-{{ .Env.VAR1 }}",
 				"{{ .Env.VAR3 }}-name-{{ .Env.VAR2 }}",
 			},
-			outldflags: []string{
-				"value1-name-value2",
-				"value1-name-value3",
-				"value3-name-value1",
-				"value3-name-value2",
-			},
+			outldflags: "value1-name-value2 value1-name-value3 value3-name-value1 value3-name-value2",
 		},
 	}
 
@@ -692,12 +687,8 @@ func Test_generateLdflags(t *testing.T) {
 				return
 			}
 			// Note: generated env variables contain the process's env variables too.
-			var expected []string
-			for _, v := range tt.outldflags {
-				expected = append(expected, fmt.Sprintf("-ldflags=%s", v))
-			}
-			if !cmp.Equal(ldflags, expected) {
-				t.Errorf(cmp.Diff(ldflags, expected))
+			if !cmp.Equal(ldflags, tt.outldflags) {
+				t.Errorf(cmp.Diff(ldflags, tt.outldflags))
 			}
 		})
 	}

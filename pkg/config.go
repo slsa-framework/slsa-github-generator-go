@@ -101,7 +101,7 @@ func fromConfig(cf *goReleaserConfigFile) (*GoReleaserConfig, error) {
 }
 
 func validatePath(path string) error {
-	return isUnderWD(path)
+	return fileIsUnderDirectory(path)
 }
 
 func validateMain(cf *goReleaserConfigFile) error {
@@ -110,7 +110,7 @@ func validateMain(cf *goReleaserConfigFile) error {
 	}
 
 	// Validate the main path is under the current directory.
-	return isUnderWD(*cf.Main)
+	return fileIsUnderDirectory(*cf.Main)
 }
 
 func validateVersion(cf *goReleaserConfigFile) error {

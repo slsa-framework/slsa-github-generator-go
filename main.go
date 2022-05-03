@@ -27,7 +27,7 @@ import (
 	// Enable the github OIDC auth provider.
 	_ "github.com/sigstore/cosign/pkg/providers/github"
 
-	"github.com/slsa-framework/slsa-github-generator-go/builder/pkg"
+	"github.com/slsa-framework/slsa-github-generator-go/pkg"
 )
 
 func usage(p string) {

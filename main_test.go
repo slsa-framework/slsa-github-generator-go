@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/slsa-framework/slsa-github-generator-go/pkg"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
@@ -37,8 +39,7 @@ func Test_runVerify(t *testing.T) {
 			commands: []string{
 				"-trimpath",
 				"-tags=netgo",
-				"-ldflags=bla",
-				"-ldflags=something-else",
+				"-ldflags=bla something-else",
 				"-o",
 				"binary-linux-amd64",
 			},
@@ -57,8 +58,7 @@ func Test_runVerify(t *testing.T) {
 			commands: []string{
 				"-trimpath",
 				"-tags=netgo",
-				"-ldflags=bla",
-				"-ldflags=something-else",
+				"-ldflags=bla something-else",
 				"-o",
 				"binary-linux-amd64",
 			},
@@ -75,8 +75,7 @@ func Test_runVerify(t *testing.T) {
 			commands: []string{
 				"-trimpath",
 				"-tags=netgo",
-				"-ldflags=bla",
-				"-ldflags=something-else",
+				"-ldflags=bla something-else",
 				"-o",
 				"binary-linux-amd64",
 			},
@@ -91,8 +90,7 @@ func Test_runVerify(t *testing.T) {
 			config:   "./testdata/two-ldflags-emptyflags.yml",
 			evalEnvs: "VERSION_LDFLAGS:bla, ELSE:else",
 			commands: []string{
-				"-ldflags=bla",
-				"-ldflags=something-else",
+				"-ldflags=bla something-else",
 				"-o",
 				"binary-linux-amd64",
 			},
@@ -109,8 +107,7 @@ func Test_runVerify(t *testing.T) {
 			config:   "./testdata/two-ldflags-noflags.yml",
 			evalEnvs: "VERSION_LDFLAGS:bla, ELSE:else",
 			commands: []string{
-				"-ldflags=bla",
-				"-ldflags=something-else",
+				"-ldflags=bla something-else",
 				"-o",
 				"binary-linux-amd64",
 			},
@@ -159,7 +156,7 @@ func Test_runVerify(t *testing.T) {
 			},
 		},
 		{
-			name:     "two ldflags empty ldflags",
+			name:     "empty ldflags",
 			subject:  "binary-linux-amd64",
 			config:   "./testdata/emptyldflags.yml",
 			evalEnvs: "VERSION_LDFLAGS:bla, ELSE:else",
@@ -291,12 +288,12 @@ func extract(lines string) ([]string, []string, string, error) {
 		return []string{}, []string{}, "", err
 	}
 
-	cmd, err := unmarshallList(scmd)
+	cmd, err := pkg.UnmarshallList(scmd)
 	if err != nil {
 		return []string{}, []string{}, "", err
 	}
 
-	env, err := unmarshallList(senv)
+	env, err := pkg.UnmarshallList(senv)
 	if err != nil {
 		return []string{}, []string{}, "", err
 	}
