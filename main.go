@@ -16,9 +16,7 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -71,25 +69,6 @@ func runBuild(dry bool, configFile, evalEnvs string) error {
 	}
 
 	return nil
-}
-
-func unmarshallList(arg string) ([]string, error) {
-	var res []string
-	// If argument is empty, return an empty list early,
-	// because `json.Unmarshal` would fail.
-	if arg == "" {
-		return res, nil
-	}
-
-	cs, err := base64.StdEncoding.DecodeString(arg)
-	if err != nil {
-		return res, fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
-	}
-
-	if err := json.Unmarshal(cs, &res); err != nil {
-		return []string{}, fmt.Errorf("json.Unmarshal: %w", err)
-	}
-	return res, nil
 }
 
 func runProvenanceGeneration(subject, digest, commands, envs string) error {
