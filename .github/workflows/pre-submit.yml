@@ -23,7 +23,5 @@ jobs:
           go mod vendor
           # Build.
           go build -mod=vendor
-          # Test packages.
-          go test -mod=vendor -v ./...
-          # Test main.
-          go test -mod=vendor "github.com/$GITHUB_REPOSITORY"
+          # Tests.
+          go test -mod=vendor -v `go list ./...`
