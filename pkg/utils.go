@@ -15,7 +15,10 @@
 package pkg
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,7 +26,7 @@ import (
 
 var errorInvalidDirectory = errors.New("invalid directory")
 
-func isUnderWD(path string) error {
+func fileIsUnderDirectory(path string) error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -38,4 +41,23 @@ func isUnderWD(path string) error {
 	}
 
 	return nil
+}
+
+func UnmarshallList(arg string) ([]string, error) {
+	var res []string
+	// If argument is empty, return an empty list early,
+	// because `json.Unmarshal` would fail.
+	if arg == "" {
+		return res, nil
+	}
+
+	cs, err := base64.StdEncoding.DecodeString(arg)
+	if err != nil {
+		return res, fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
+	}
+
+	if err := json.Unmarshal(cs, &res); err != nil {
+		return []string{}, fmt.Errorf("json.Unmarshal: %w", err)
+	}
+	return res, nil
 }

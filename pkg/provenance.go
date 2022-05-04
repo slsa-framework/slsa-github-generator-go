@@ -16,9 +16,7 @@ package pkg
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -35,7 +33,7 @@ const (
 	buildType              = "https://github.com/slsa-framework/slsa-github-generator-go@v1"
 	requestTokenEnvKey     = "ACTIONS_ID_TOKEN_REQUEST_TOKEN"
 	requestURLEnvKey       = "ACTIONS_ID_TOKEN_REQUEST_URL"
-	audience               = "slsa-framework/slsa-github-generator-go/builder"
+	audience               = "slsa-framework/slsa-github-generator-go"
 )
 
 type (
@@ -62,12 +60,12 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		return nil, fmt.Errorf("sha256 digest is not valid: %s", digest)
 	}
 
-	com, err := unmarshallList(command)
+	com, err := UnmarshallList(command)
 	if err != nil {
 		return nil, err
 	}
 
-	env, err := unmarshallList(envs)
+	env, err := UnmarshallList(envs)
 	if err != nil {
 		return nil, err
 	}
@@ -133,29 +131,10 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		return nil, err
 	}
 
-	// Upload the signed attestation to recor.
-	if err := s.Upload(ctx, att); err != nil {
+	// Upload the signed attestation to rekor.
+	if _, err := s.Upload(ctx, att); err != nil {
 		return nil, err
 	}
 
 	return att.Bytes(), nil
-}
-
-func unmarshallList(arg string) ([]string, error) {
-	var res []string
-	// If argument is empty, return an empty list early,
-	// because `json.Unmarshal` would fail.
-	if arg == "" {
-		return res, nil
-	}
-
-	cs, err := base64.StdEncoding.DecodeString(arg)
-	if err != nil {
-		return res, fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
-	}
-
-	if err := json.Unmarshal(cs, &res); err != nil {
-		return []string{}, fmt.Errorf("json.Unmarshal: %w", err)
-	}
-	return res, nil
 }

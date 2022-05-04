@@ -23,5 +23,5 @@ jobs:
           go mod vendor
           # Build.
           go build -mod=vendor
-          # Test.
+          # Tests.
           go test -mod=vendor -v ./...
