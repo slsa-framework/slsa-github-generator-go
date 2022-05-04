@@ -24,4 +24,4 @@ jobs:
           # Build.
           go build -mod=vendor
           # Tests.
-          go test -mod=vendor -v `go list ./...`
+          go test -mod=vendor -v ./...
