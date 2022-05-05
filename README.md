@@ -142,7 +142,7 @@ goarch: amd64 # same values as GOARCH env variable.
 # Binary name.
 # {{ .Os }} will be replaced by goos field in the config file.
 # {{ .Arch }} will be replaced by goarch field in the config file.
-binary: binary-{{ .OS }}-{{ .Arch }}
+binary: binary-{{ .Os }}-{{ .Arch }}
 
 # (Optional) ldflags generated dynamically in the workflow, and set as the `env` input variables in the workflow.
 ldflags:
