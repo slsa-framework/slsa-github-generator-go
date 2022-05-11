@@ -70,11 +70,6 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		return nil, err
 	}
 
-	c, err := github.NewOIDCClient()
-	if err != nil {
-		return nil, err
-	}
-
 	// Generate a basic WorkflowRun for our subject based on the github
 	// context.
 	wr := slsa.NewWorkflowRun([]intoto.Subject{
@@ -102,6 +97,15 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 
 	// Generate the provenance.
 	ctx := context.Background()
+
+	// Note: we leave the client as `nil` for pre-submit tests.
+	var c *github.OIDCClient
+	if !isPreSubmitTests() {
+		c, err = github.NewOIDCClient()
+		if err != nil {
+			return nil, err
+		}
+	}
 	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
 	if err != nil {
 		return nil, err
