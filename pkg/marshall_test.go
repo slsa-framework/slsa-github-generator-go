@@ -15,7 +15,6 @@
 package pkg
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -50,9 +49,9 @@ func Test_marshall(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r, err := marshall(tt.variables)
+			r, err := marshallToString(tt.variables)
 			if err != nil {
-				t.Errorf("marshall: %v", err)
+				t.Errorf("marshallToString: %v", err)
 			}
 			if !cmp.Equal(r, tt.expected) {
 				t.Errorf(cmp.Diff(r, tt.expected))
