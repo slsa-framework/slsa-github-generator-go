@@ -56,27 +56,27 @@ func Test_ConfigFromFile(t *testing.T) {
 		{
 			name:     "missing version",
 			path:     "./testdata/releaser-noversion.yml",
-			expected: errorUnsupportedVersion,
+			expected: ErrorUnsupportedVersion,
 		},
 		{
 			name:     "invalid version",
 			path:     "./testdata/releaser-invalid-version.yml",
-			expected: errorUnsupportedVersion,
+			expected: ErrorUnsupportedVersion,
 		},
 		{
 			name:     "invalid envs",
 			path:     "./testdata/releaser-invalid-envs.yml",
-			expected: errorInvalidEnvironmentVariable,
+			expected: ErrorInvalidEnvironmentVariable,
 		},
 		{
 			name:     "invalid main",
 			path:     "./testdata/releaser-invalid-main.yml",
-			expected: errorInvalidDirectory,
+			expected: ErrorInvalidDirectory,
 		},
 		{
 			name:     "invalid path",
 			path:     "../testdata/releaser-invalid-main.yml",
-			expected: errorInvalidDirectory,
+			expected: ErrorInvalidDirectory,
 		},
 	}
 	for _, tt := range tests {

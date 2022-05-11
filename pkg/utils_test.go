@@ -41,12 +41,12 @@ func Test_fileIsUnderDirectory(t *testing.T) {
 		{
 			name:     "parent invalid path",
 			path:     "../invalid/path",
-			expected: errorInvalidDirectory,
+			expected: ErrorInvalidDirectory,
 		},
 		{
 			name:     "some invalid fullpath",
 			path:     "/some/invalid/fullpath",
-			expected: errorInvalidDirectory,
+			expected: ErrorInvalidDirectory,
 		},
 	}
 	for _, tt := range tests {

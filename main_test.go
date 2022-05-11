@@ -173,6 +173,57 @@ func Test_runVerify(t *testing.T) {
 				"CGO_ENABLED=0",
 			},
 		},
+		{
+			name:     "valid main",
+			subject:  "binary-linux-amd64",
+			config:   "./testdata/valid-main.yml",
+			evalEnvs: "VERSION_LDFLAGS:bla, ELSE:else",
+			commands: []string{
+				"-trimpath",
+				"-tags=netgo",
+				"-ldflags=bla something-else",
+				"-o",
+				"binary-linux-amd64",
+				"./path/to/main.go",
+			},
+			envs: []string{
+				"GOOS=linux",
+				"GOARCH=amd64",
+				"GO111MODULE=on",
+				"CGO_ENABLED=0",
+			},
+		},
+		// Below are the same tests we do in pkg/build_test.go
+		{
+			name:   "invalid main",
+			config: "./pkg/testdata/releaser-invalid-main.yml",
+			err:    pkg.ErrorInvalidDirectory,
+		},
+		{
+			name:   "missing version",
+			config: "./pkg/testdata/releaser-noversion.yml",
+			err:    pkg.ErrorUnsupportedVersion,
+		},
+		{
+			name:   "invalid version",
+			config: "./pkg/testdata/releaser-invalid-version.yml",
+			err:    pkg.ErrorUnsupportedVersion,
+		},
+		{
+			name:   "invalid envs",
+			config: "./pkg/testdata/releaser-invalid-envs.yml",
+			err:    pkg.ErrorInvalidEnvironmentVariable,
+		},
+		{
+			name:   "invalid main",
+			config: "./pkg/testdata/releaser-invalid-main.yml",
+			err:    pkg.ErrorInvalidDirectory,
+		},
+		{
+			name:   "invalid path",
+			config: "../pkg/testdata/releaser-invalid-main.yml",
+			err:    pkg.ErrorInvalidDirectory,
+		},
 	}
 
 	for _, tt := range tests {
@@ -192,6 +243,10 @@ func Test_runVerify(t *testing.T) {
 
 			if !errCmp(err, tt.err) {
 				t.Errorf(cmp.Diff(err, tt.err, cmpopts.EquateErrors()))
+			}
+
+			if err != nil {
+				return
 			}
 
 			cmd, env, subject, err := extract(s)
