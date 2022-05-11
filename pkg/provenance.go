@@ -124,7 +124,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 	p.Predicate.Materials = append(p.Predicate.Materials, runnerMaterials)
 
-	if isPullRequestTrigger() {
+	if isPreSubmitTests() {
 		fmt.Println("pull_request event detected. Skipping signing.")
 		return marshallToBytes(*p)
 	}
@@ -144,6 +144,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	return att.Bytes(), nil
 }
 
-func isPullRequestTrigger() bool {
-	return (os.Getenv("GITHUB_EVENT_NAME") == "pull_request")
+func isPreSubmitTests() bool {
+	return (os.Getenv("GITHUB_EVENT_NAME") == "pull_request" &&
+		os.Getenv("GITHUB_REPOSITORY") == "slsa-framework/slsa-github-generator-go")
 }
