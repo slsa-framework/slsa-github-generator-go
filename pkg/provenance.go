@@ -129,7 +129,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	p.Predicate.Materials = append(p.Predicate.Materials, runnerMaterials)
 
 	if isPreSubmitTests() {
-		fmt.Println("pull_request event detected. Skipping signing.")
+		fmt.Println("Pre-submit tests detected. Skipping signing.")
 		return marshallToBytes(*p)
 	}
 
