@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source "./.github/workflows/scripts/e2e-assert.sh"
+
 e2e_verify_predicate_subject_name() {
     _e2e_verify_query "$1" "$2" '.subject[0].name'
 }

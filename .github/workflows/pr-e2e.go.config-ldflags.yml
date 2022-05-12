@@ -20,10 +20,9 @@ jobs:
         run: |
           set -euo pipefail
           
-          BRANCH=$(echo "$THIS_FILE" | cut -d '.' -f4)
           echo "::set-output name=version::-X main.gitVersion=v1.2.3"
           echo "::set-output name=commit::-X main.gitCommit=abcdef"
-          echo "::set-output name=branch::-X main.gitBranch=$BRANCH"
+          echo "::set-output name=branch::-X main.gitBranch=main"
   build:
     needs: [args]
     permissions:
