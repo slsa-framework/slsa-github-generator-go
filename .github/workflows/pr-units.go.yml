@@ -1,0 +1,27 @@
+name: Go Pre submits - Unit tests
+on: [pull_request, workflow_dispatch]
+
+permissions: read-all
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.3.4
+
+      - name: setup-go
+        uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v2.2.0
+        with:
+          go-version: "1.18"
+
+      - name: Run tests for builder
+        run: |
+          set -euo pipefail
+
+          # Download dependencies.
+          go mod vendor
+          # Build.
+          go build -mod=vendor
+          # Tests.
+          go test -mod=vendor -v ./...
