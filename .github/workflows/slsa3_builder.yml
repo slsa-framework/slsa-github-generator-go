@@ -71,19 +71,35 @@ jobs:
     steps:
       - name: Detect the builder ref
         id: detect
+        env:
+          PULL_REQUEST_REPOSITORY: "${{ github.event.pull_request.head.repo.full_name }}"
         shell: bash
         run: |
-          status_code=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=slsa-framework/slsa-github-generator-go/builder" -o jwt.json -w '%{http_code}')
+          # On pull requests, permissions are not available.
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+              echo "::set-output name=builder_repo::$PULL_REQUEST_REPOSITORY"
+              echo "::set-output name=builder_ref::$GITHUB_HEAD_REF"
+              exit 0
+          fi
+
+          if [[ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]] || [[ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]]; then
+              echo "OIDC not available" not available.
+              exit 1
+          fi
+
+          status_code=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$GITHUB_REPOSITORY/builder" -o jwt.json -w '%{http_code}')
           if [[ $status_code -ge 400 ]]; then
               error_msg=$(jq -r .message jwt.json 2>/dev/null || echo 'unknown error')
               echo "Failed to get OIDC token from GitHub, response $status_code: $error_msg"
-              exit 1;
+              exit 2;
           fi
+
           export WORKFLOW_REF=$(cat jwt.json | jq -r '.value' | cut -d "." -f2 | base64 -d | jq -r '.job_workflow_ref')
           if [ -z $WORKFLOW_REF ]; then
-            echo "OIDC token parsing failure: job_workflow_ref could not be retrieved"
-            exit 1;
+              echo "OIDC token parsing failure: job_workflow_ref could not be retrieved"
+              exit 3;
           fi
+
           echo "::set-output name=builder_repo::$(echo $WORKFLOW_REF | cut -d "@" -f1 | cut -d '/' -f1-2)"
           echo "::set-output name=builder_ref::$(echo $WORKFLOW_REF | cut -d "@" -f2)"
 

@@ -70,11 +70,6 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		return nil, err
 	}
 
-	c, err := github.NewOIDCClient()
-	if err != nil {
-		return nil, err
-	}
-
 	// Generate a basic WorkflowRun for our subject based on the github
 	// context.
 	wr := slsa.NewWorkflowRun([]intoto.Subject{
@@ -102,6 +97,16 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 
 	// Generate the provenance.
 	ctx := context.Background()
+
+	// Note: we leave the client as `nil` for pre-submit tests.
+	var c *github.OIDCClient
+	if !isPreSubmitTests() {
+		c, err = github.NewOIDCClient()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
 	if err != nil {
 		return nil, err
@@ -124,9 +129,17 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 	p.Predicate.Materials = append(p.Predicate.Materials, runnerMaterials)
 
+	if isPreSubmitTests() {
+		fmt.Println("Pre-submit tests detected. Skipping signing.")
+		return marshallToBytes(*p)
+	}
+
 	// Sign the provenance.
 	s := sigstore.NewDefaultSigner()
-	att, err := s.Sign(ctx, p)
+	att, err := s.Sign(ctx, &intoto.Statement{
+		StatementHeader: p.StatementHeader,
+		Predicate:       p.Predicate,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -137,4 +150,9 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 
 	return att.Bytes(), nil
+}
+
+func isPreSubmitTests() bool {
+	return (os.Getenv("GITHUB_EVENT_NAME") == "pull_request" &&
+		os.Getenv("GITHUB_REPOSITORY") == "slsa-framework/slsa-github-generator-go")
 }

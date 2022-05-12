@@ -15,8 +15,6 @@
 package pkg
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -111,7 +109,7 @@ func (b *GoBuild) Run(dry bool) error {
 
 		// Share the resolved name of the binary.
 		fmt.Printf("::set-output name=go-binary-name::%s\n", filename)
-		command, err := marshallList(com)
+		command, err := marshallToString(com)
 		if err != nil {
 			return err
 		}
@@ -123,7 +121,7 @@ func (b *GoBuild) Run(dry bool) error {
 			return err
 		}
 
-		menv, err := marshallList(env)
+		menv, err := marshallToString(env)
 		if err != nil {
 			return err
 		}
@@ -157,19 +155,6 @@ func (b *GoBuild) generateCommand(flags []string, binary string) []string {
 		command = append(command, *b.cfg.Main)
 	}
 	return command
-}
-
-func marshallList(args []string) (string, error) {
-	jsonData, err := json.Marshal(args)
-	if err != nil {
-		return "", fmt.Errorf("json.Marshal: %w", err)
-	}
-
-	encoded := base64.StdEncoding.EncodeToString(jsonData)
-	if err != nil {
-		return "", fmt.Errorf("base64.StdEncoding.DecodeString: %w", err)
-	}
-	return encoded, nil
 }
 
 func (b *GoBuild) generateCommandEnvVariables() ([]string, error) {
