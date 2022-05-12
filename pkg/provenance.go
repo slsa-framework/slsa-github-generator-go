@@ -101,14 +101,13 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	// Note: we leave the client as `nil` for pre-submit tests.
 	var c *github.OIDCClient
 	if !isPreSubmitTests() {
-		fmt.Println("detected e2e tests")
 		c, err = github.NewOIDCClient()
 		if err != nil {
 			return nil, err
 		}
 	}
 	fmt.Println("c:", c)
-	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
+	p, err := slsa.HostedActionsProvenance(ctx, wr, nil)
 	if err != nil {
 		return nil, err
 	}
