@@ -101,11 +101,13 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	// Note: we leave the client as `nil` for pre-submit tests.
 	var c *github.OIDCClient
 	if !isPreSubmitTests() {
+		fmt.Println("detected e2e tests")
 		c, err = github.NewOIDCClient()
 		if err != nil {
 			return nil, err
 		}
 	}
+	fmt.Println("c:", c)
 	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
 	if err != nil {
 		return nil, err
@@ -149,6 +151,8 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 }
 
 func isPreSubmitTests() bool {
+	fmt.Println("GITHUB_EVENT_NAME:", os.Getenv("GITHUB_EVENT_NAME"))
+	fmt.Println("GITHUB_REPOSITORY:", os.Getenv("GITHUB_REPOSITORY"))
 	return (os.Getenv("GITHUB_EVENT_NAME") == "pull_request" &&
 		os.Getenv("GITHUB_REPOSITORY") == "slsa-framework/slsa-github-generator-go")
 }
