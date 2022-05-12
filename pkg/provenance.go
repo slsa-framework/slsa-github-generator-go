@@ -107,7 +107,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		}
 	}
 
-	p, err := slsa.HostedActionsProvenance(ctx, wr, nil)
+	p, err := slsa.HostedActionsProvenance(ctx, wr, c)
 	if err != nil {
 		return nil, err
 	}
