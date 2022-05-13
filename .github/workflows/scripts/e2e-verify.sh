@@ -20,7 +20,7 @@ source "./.github/workflows/scripts/e2e-utils.sh"
 ATTESTATION=$(cat "$PROVENANCE" | base64 -d)
 LDFLAGS=$(echo "$THIS_FILE" | cut -d '.' -f3 | grep -v noldflags)
 
-e2e_verify_predicate_subject_name "$ATTESTATION" "binary-linux-amd64"
+e2e_verify_predicate_subject_name "$ATTESTATION" "$BINARY"
 e2e_verify_predicate_builder_id "$ATTESTATION" "https://github.com/Attestations/GitHubHostedActions@v1"
 e2e_verify_predicate_builderType "$ATTESTATION" "https://github.com/slsa-framework/slsa-github-generator-go@v1"
 
@@ -37,9 +37,9 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref" "$GITHUB
 e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$GITHUB_REF_TYPE"
 
 if [[ -z "$LDFLAGS" ]]; then
-    e2e_verify_predicate_buildConfig_command "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-o\",\"binary-linux-amd64\",\"./pr-e2e/go/main.go\"]"
+    e2e_verify_predicate_buildConfig_command "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-o\",\"$BINARY\",\"./pr-e2e/go/main.go\"]"
 else
-    e2e_verify_predicate_buildConfig_command "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-ldflags=-X main.gitVersion=v1.2.3 -X main.gitCommit=abcdef -X main.gitBranch=$BRANCH\",\"-o\",\"binary-linux-amd64\",\"./pr-e2e/go/main.go\"]"
+    e2e_verify_predicate_buildConfig_command "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-ldflags=-X main.gitVersion=v1.2.3 -X main.gitCommit=abcdef -X main.gitBranch=$BRANCH\",\"-o\",\"$BINARY\",\"./pr-e2e/go/main.go\"]"
     chmod a+x ./"$BINARY"
     V=$(./"$BINARY" | grep 'GitVersion: v1.2.3')
     C=$(./"$BINARY" | grep 'GitCommit: abcdef')
