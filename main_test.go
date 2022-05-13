@@ -193,7 +193,7 @@ func Test_runVerify(t *testing.T) {
 				"CGO_ENABLED=0",
 			},
 		},
-		// Below are the same tests we do in pkg/build_test.go
+		// Below are the same tests we do in pkg/config_test.go
 		{
 			name:   "invalid main",
 			config: "./pkg/testdata/releaser-invalid-main.yml",
