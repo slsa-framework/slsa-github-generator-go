@@ -24,7 +24,7 @@ import (
 	"strings"
 )
 
-var errorInvalidDirectory = errors.New("invalid directory")
+var ErrorInvalidDirectory = errors.New("invalid directory")
 
 func fileIsUnderDirectory(path string) error {
 	wd, err := os.Getwd()
@@ -37,7 +37,7 @@ func fileIsUnderDirectory(path string) error {
 	}
 
 	if !strings.HasPrefix(p, wd+"/") {
-		return errorInvalidDirectory
+		return ErrorInvalidDirectory
 	}
 
 	return nil

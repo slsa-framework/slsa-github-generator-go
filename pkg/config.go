@@ -24,8 +24,8 @@ import (
 )
 
 var (
-	errorInvalidEnvironmentVariable = errors.New("invalid environment variable")
-	errorUnsupportedVersion         = errors.New("version not supported")
+	ErrorInvalidEnvironmentVariable = errors.New("invalid environment variable")
+	ErrorUnsupportedVersion         = errors.New("version not supported")
 )
 
 var supportedVersions = map[int]bool{
@@ -116,7 +116,7 @@ func validateMain(cf *goReleaserConfigFile) error {
 func validateVersion(cf *goReleaserConfigFile) error {
 	_, exists := supportedVersions[cf.Version]
 	if !exists {
-		return fmt.Errorf("%w:%d", errorUnsupportedVersion, cf.Version)
+		return fmt.Errorf("%w:%d", ErrorUnsupportedVersion, cf.Version)
 	}
 
 	return nil
@@ -127,7 +127,7 @@ func (r *GoReleaserConfig) setEnvs(cf *goReleaserConfigFile) error {
 	for _, e := range cf.Env {
 		es := strings.Split(e, "=")
 		if len(es) != 2 {
-			return fmt.Errorf("%w: %s", errorInvalidEnvironmentVariable, e)
+			return fmt.Errorf("%w: %s", ErrorInvalidEnvironmentVariable, e)
 		}
 		m[es[0]] = es[1]
 	}
