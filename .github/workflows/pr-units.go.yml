@@ -1,4 +1,4 @@
-name: Go Pre submits - Unit tests
+name: PR units - go
 on: [pull_request, workflow_dispatch]
 
 permissions: read-all
