@@ -24,8 +24,6 @@ e2e_verify_predicate_subject_name "$ATTESTATION" "$BINARY"
 e2e_verify_predicate_builder_id "$ATTESTATION" "https://github.com/Attestations/GitHubHostedActions@v1"
 e2e_verify_predicate_builderType "$ATTESTATION" "https://github.com/slsa-framework/slsa-github-generator-go@v1"
 
-#TODO(#108): don't set GITHUB_WORKFLOW.
-GITHUB_WORKFLOW="%!s(<nil>)"
 e2e_verify_predicate_invocation_configSource "$ATTESTATION" "{\"uri\":\"git+https://github.com/$GITHUB_REPOSITORY@$GITHUB_REF\",\"digest\":{\"sha1\":\"$GITHUB_SHA\"},\"entryPoint\":\"$GITHUB_WORKFLOW\"}"
 
 e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_actor" "$GITHUB_ACTOR"
