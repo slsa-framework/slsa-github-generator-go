@@ -22,6 +22,8 @@ env:
   GENERATED_BINARY_NAME: compiled-binary
   # Builder
   BUILDER_BINARY: builder
+  # Builder location
+  BUILDER_DIR: builders
 
 ###################################################################
 #                                                                 #
@@ -127,6 +129,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
+          cd "$BUILDER_DIR"/go/
+
           #TODO(reproducible)
           go mod vendor
 
@@ -144,8 +149,10 @@ jobs:
         run: |
           set -euo pipefail
 
+          cd "$BUILDER_DIR"/go/
+
           # https://go.dev/ref/mod#build-commands.
-          go build -mod=vendor -o "$BUILDER_BINARY"
+          go build -mod=vendor -o ../../"$BUILDER_BINARY"
           BUILDER_DIGEST=$(sha256sum "$BUILDER_BINARY" | awk '{print $1}')
           echo "::set-output name=go-builder-sha256::$BUILDER_DIGEST"
           echo "hash of $BUILDER_BINARY is $BUILDER_DIGEST"
