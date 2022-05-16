@@ -11,7 +11,7 @@ require (
 
 require (
 	github.com/sigstore/sigstore v1.2.1-0.20220424143412-3d41663116d5 // indirect
-	github.com/slsa-framework/slsa-github-generator v0.0.0-20220512235017-c5c4e5030859
+	github.com/slsa-framework/slsa-github-generator v0.0.0-20220513145523-8d0cdc6af66f
 )
 
 require (

@@ -135,7 +135,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 
 	// Sign the provenance.
-	s := sigstore.NewDefaultSigner()
+	s := sigstore.NewDefaultFulcio()
 	att, err := s.Sign(ctx, &intoto.Statement{
 		StatementHeader: p.StatementHeader,
 		Predicate:       p.Predicate,
@@ -145,7 +145,8 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	}
 
 	// Upload the signed attestation to rekor.
-	if _, err := s.Upload(ctx, att); err != nil {
+	r := sigstore.NewDefaultRekor()
+	if _, err := r.Upload(ctx, att); err != nil {
 		return nil, err
 	}
 
