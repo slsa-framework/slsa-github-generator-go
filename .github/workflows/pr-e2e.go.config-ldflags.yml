@@ -10,6 +10,7 @@ env:
 
 jobs:
   args:
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.ldflags.outputs.version }}
       commit: ${{ steps.ldflags.outputs.commit }}
