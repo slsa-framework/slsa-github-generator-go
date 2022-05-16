@@ -19,6 +19,9 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Go tests.
+          cd builders/go/
+          
           # Download dependencies.
           go mod vendor
           # Build.
