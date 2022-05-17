@@ -217,18 +217,6 @@ jobs:
           # Make the builder executable.
           chmod a+x "$BUILDER_BINARY"
 
-      - name: Download dependencies
-        shell: bash
-        run: |
-          set -euo pipefail
-          go mod vendor
-
-      # TODO(hermeticity) OS-level.
-      # - name: Disable hermeticity
-      # uses: slsa/hermeticity@xxx
-      #   with:
-      #     to-state: enabled
-
       - name: Build dry project
         id: build-dry
         shell: bash
@@ -236,12 +224,9 @@ jobs:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
           CONFIG_FILE: "${{ inputs.config-file }}"
           UNTRUSTED_ENVS: "${{ inputs.evaluated-envs }}"
-          UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
           set -euo pipefail
 
-          # TODO: pass UNTRUSTED_WORKING_DIR to builder, which will use realpath()
-          # to compute the actual directory.
           # Note: this outputs information about resolved arguments, etc.
           # the values are trusted because the compiler is not invoked.
           echo ./"$BUILDER_BINARY" build --dry "$CONFIG_FILE" "$UNTRUSTED_ENVS"
@@ -301,10 +286,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Note: maybe simpler to make this step part of the builder
-          echo "UNTRUSTED_WORKING_DIR: $UNTRUSTED_WORKING_DIR"
-          ls -l
-          
+          # Note: maybe simpler to make this step part of the builder in the future.
           cd "$UNTRUSTED_WORKING_DIR"
           go mod vendor
 
@@ -321,15 +303,12 @@ jobs:
           BUILDER_BINARY: "${{ env.BUILDER_BINARY }}"
           CONFIG_FILE: "${{ inputs.config-file }}"
           UNTRUSTED_ENVS: "${{ inputs.evaluated-envs }}"
-          UNTRUSTED_WORKING_DIR: "${{ inputs.working-dir }}"
         run: |
           set -euo pipefail
 
           # Disable set-output command.
           echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
 
-          # TODO: pass UNTRUSTED_WORKING_DIR to builder, which will use realpath()
-          # to compute the actual directory.
           echo "./$BUILDER_BINARY" build "$PWD/$CONFIG_FILE" "$UNTRUSTED_ENVS"
           # Note: We need to provide the asbolute path to the output binary.
           export OUTPUT_BINARY="$PWD/${{ env.GENERATED_BINARY_NAME }}"
