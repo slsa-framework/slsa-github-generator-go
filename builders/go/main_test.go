@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -269,8 +270,9 @@ func Test_runVerify(t *testing.T) {
 			}
 
 			sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
-			if !cmp.Equal(env, tt.envs, sorted) {
-				t.Errorf(cmp.Diff(env, tt.envs))
+			expectedEnvs := append(tt.envs, fmt.Sprintf("PWD=%v", os.Getenv("PWD")))
+			if !cmp.Equal(env, expectedEnvs, sorted) {
+				t.Errorf(cmp.Diff(env, expectedEnvs))
 			}
 		})
 	}
