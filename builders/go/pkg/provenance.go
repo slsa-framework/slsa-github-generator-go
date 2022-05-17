@@ -42,9 +42,8 @@ type (
 		Env     []string `json:"env"`
 	}
 	buildConfig struct {
-		Version    int    `json:"version"`
-		Steps      []step `json:"steps"`
-		WorkingDir string `json:"workingDir"`
+		Version int    `json:"version"`
+		Steps   []step `json:"steps"`
 	}
 )
 
