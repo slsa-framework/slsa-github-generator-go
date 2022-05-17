@@ -134,7 +134,7 @@ func (b *GoBuild) Run(dry bool) error {
 		// Share the env variables used.
 		fmt.Printf("::set-output name=go-env::%s\n", menv)
 
-		// Share working directory necessary for issuing he vendoring command.
+		// Share working directory necessary for issuing the vendoring command.
 		fmt.Printf("::set-output name=working-dir::%s\n", dir)
 		return nil
 	}
