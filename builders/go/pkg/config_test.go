@@ -94,6 +94,7 @@ func Test_ConfigFromFile(t *testing.T) {
 			t.Parallel()
 
 			_, err := ConfigFromFile(tt.path)
+			// TODO: compare output.
 			if !errCmp(err, tt.expected) {
 				t.Errorf(cmp.Diff(err, tt.expected))
 			}

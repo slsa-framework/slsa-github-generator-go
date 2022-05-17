@@ -177,7 +177,7 @@ jobs:
       go-binary-name: ${{ steps.build-dry.outputs.go-binary-name }}
       go-command: ${{ steps.build-dry.outputs.go-command }}
       go-env: ${{ steps.build-dry.outputs.go-env }}
-      go-working-dir: ${{ steps.build-dry.outputs.working-dir }}
+      go-working-dir: ${{ steps.build-dry.outputs.go-working-dir }}
     runs-on: ubuntu-latest
     needs: builder
     steps:
@@ -289,7 +289,7 @@ jobs:
           # Note: maybe simpler to make this step part of the builder in the future.
           echo "UNTRUSTED_WORKING_DIR: $UNTRUSTED_WORKING_DIR"
           ls -l
-          
+
           cd "$UNTRUSTED_WORKING_DIR"
           go mod vendor
 

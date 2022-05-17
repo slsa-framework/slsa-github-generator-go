@@ -136,6 +136,8 @@ func (b *GoBuild) Run(dry bool) error {
 
 		// Share working directory necessary for issuing the vendoring command.
 		fmt.Printf("::set-output name=go-working-dir::%s\n", dir)
+
+		fmt.Println("output go-working-dir=", dir)
 		return nil
 	}
 
@@ -174,11 +176,10 @@ func getOutputBinaryPath(binary string) (string, error) {
 }
 
 func (b *GoBuild) changeDir() (string, error) {
-	fmt.Println("dir:", b.cfg.Dir)
 	if b.cfg.Dir == nil {
 		return os.Getenv("PWD"), nil
 	}
-	fmt.Println("dir2:", *b.cfg.Dir)
+
 	// Note: validation of the dir is done in config.go
 	return *b.cfg.Dir, os.Chdir(*b.cfg.Dir)
 }

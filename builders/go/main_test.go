@@ -313,6 +313,7 @@ func (r *run) end() string {
 }
 
 func extract(lines string) ([]string, []string, string, error) {
+	// TODO: add support for go-working-dir.
 	rsubject := regexp.MustCompile("^::set-output name=go-binary-name::(.*)$")
 	rcmd := regexp.MustCompile("^::set-output name=go-command::(.*)$")
 	renv := regexp.MustCompile("^::set-output name=go-env::(.*)$")
