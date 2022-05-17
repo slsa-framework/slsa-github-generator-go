@@ -178,7 +178,7 @@ func (b *GoBuild) changeDir() (string, error) {
 		return os.Getenv("PWD"), nil
 	}
 
-	// Note: validation of the dir is done on config.go
+	// Note: validation of the dir is done in config.go
 	return *b.cfg.Dir, os.Chdir(*b.cfg.Dir)
 }
 

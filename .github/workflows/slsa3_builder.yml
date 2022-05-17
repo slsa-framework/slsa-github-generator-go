@@ -287,6 +287,9 @@ jobs:
           set -euo pipefail
 
           # Note: maybe simpler to make this step part of the builder in the future.
+          echo "UNTRUSTED_WORKING_DIR: $UNTRUSTED_WORKING_DIR"
+          ls -l
+          
           cd "$UNTRUSTED_WORKING_DIR"
           go mod vendor
 
