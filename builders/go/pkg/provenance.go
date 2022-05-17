@@ -42,8 +42,9 @@ type (
 		Env     []string `json:"env"`
 	}
 	buildConfig struct {
-		Version int    `json:"version"`
-		Steps   []step `json:"steps"`
+		Version    int    `json:"version"`
+		Steps      []step `json:"steps"`
+		WorkingDir string `json:"workingDir"`
 	}
 )
 
@@ -87,7 +88,16 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 	wr.BuildConfig = buildConfig{
 		Version: buildConfigVersion,
 		Steps: []step{
-			// Single step.
+			// Vendoring step.
+			{
+				// Note: vendoring and comilation are currently
+				// performed in the same VM, so the compiler is
+				// the same.
+				Command: []string{com[0], "mod", "vendor"},
+				// Only record the last entry, which is the PWD.
+				Env: env[len(env)-1:],
+			},
+			// Compiling step.
 			{
 				Command: com,
 				Env:     env,

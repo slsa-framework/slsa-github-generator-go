@@ -69,7 +69,8 @@ func GoBuildNew(goc string, cfg *GoReleaserConfig) *GoBuild {
 
 func (b *GoBuild) Run(dry bool) error {
 	// Change directory.
-	if err := b.changeDir(); err != nil {
+	dir, err := b.changeDir()
+	if err != nil {
 		return err
 	}
 	// Set flags.
@@ -132,6 +133,9 @@ func (b *GoBuild) Run(dry bool) error {
 
 		// Share the env variables used.
 		fmt.Printf("::set-output name=go-env::%s\n", menv)
+
+		// Share working directory necessary for issuing he vendoring command.
+		fmt.Printf("::set-output name=working-dir::%s\n", dir)
 		return nil
 	}
 
@@ -169,13 +173,13 @@ func getOutputBinaryPath(binary string) (string, error) {
 	return binary, nil
 }
 
-func (b *GoBuild) changeDir() error {
+func (b *GoBuild) changeDir() (string, error) {
 	if b.cfg.Dir == nil {
-		return nil
+		return os.Getenv("PWD"), nil
 	}
 
 	// Note: validation of the dir is done on config.go
-	return os.Chdir(*b.cfg.Dir)
+	return *b.cfg.Dir, os.Chdir(*b.cfg.Dir)
 }
 
 func (b *GoBuild) generateCommand(flags []string, binary string) []string {
