@@ -84,7 +84,7 @@ func Test_getOutputBinaryPath(t *testing.T) {
 			expected: errorInvalidFilename,
 		},
 		{
-			name: "value filename",
+			name: "absolute path",
 			path: "/to/absolute/path/to/binary",
 		},
 	}
@@ -538,7 +538,8 @@ func Test_generateEnvVariables(t *testing.T) {
 			}{
 				flags: []string{
 					"GOOS=windows", "GOARCH=amd64",
-					"GOVAR1=value1", "GOVAR2=value2", "CGO_VAR1=val1", "CGO_VAR2=val2",
+					"GOVAR1=value1", "GOVAR2=value2",
+					"CGO_VAR1=val1", "CGO_VAR2=val2",
 				},
 				err: nil,
 			},
@@ -571,7 +572,8 @@ func Test_generateEnvVariables(t *testing.T) {
 				return
 			}
 			// Note: generated env variables contain the process's env variables too.
-			expectedFlags := append(os.Environ(), tt.expected.flags...)
+			expectedFlags := append(os.Environ(), fmt.Sprintf("PWD=%s", os.Getenv("PWD")))
+			expectedFlags = append(expectedFlags, tt.expected.flags...)
 			sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
 			if !cmp.Equal(flags, expectedFlags, sorted) {
 				t.Errorf(cmp.Diff(flags, expectedFlags))
