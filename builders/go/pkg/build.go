@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"syscall"
 )
@@ -28,7 +29,6 @@ var (
 	errorInvalidEnvArgument        = errors.New("invalid env passed via argument")
 	errorEnvVariableNameNotAllowed = errors.New("env variable not allowed")
 	errorInvalidFilename           = errors.New("invalid filename")
-	errorEmptyFilename             = errors.New("filename is not set")
 )
 
 // See `go build help`.
@@ -68,6 +68,10 @@ func GoBuildNew(goc string, cfg *GoReleaserConfig) *GoBuild {
 }
 
 func (b *GoBuild) Run(dry bool) error {
+	// Change directory.
+	if err := b.changeDir(); err != nil {
+		return err
+	}
 	// Set flags.
 	flags, err := b.generateFlags()
 	if err != nil {
@@ -131,11 +135,9 @@ func (b *GoBuild) Run(dry bool) error {
 		return nil
 	}
 
-	// Use the name provider via env variable for the compilation.
-	// This variable is trusted and defined by the re-usable workflow.
-	binary := os.Getenv("OUTPUT_BINARY")
-	if binary == "" {
-		return fmt.Errorf("OUTPUT_BINARY not defined")
+	binary, err := getOutputBinaryPath(os.Getenv("OUTPUT_BINARY"))
+	if err != nil {
+		return err
 	}
 
 	// Generate the command.
@@ -145,6 +147,35 @@ func (b *GoBuild) Run(dry bool) error {
 	fmt.Println("command", command)
 	fmt.Println("env", envs)
 	return syscall.Exec(b.goc, command, envs)
+}
+
+func getOutputBinaryPath(binary string) (string, error) {
+	// Use the name provider via env variable for the compilation.
+	// This variable is trusted and defined by the re-usable workflow.
+	// It should be set to an absolute path value.
+	abinary, err := filepath.Abs(binary)
+	if err != nil {
+		return "", fmt.Errorf("filepath.Abs: %w", err)
+	}
+
+	if binary == "" {
+		return "", fmt.Errorf("%w: OUTPUT_BINARY not defined", errorInvalidFilename)
+	}
+
+	if binary != abinary {
+		return "", fmt.Errorf("%w: %v is not an absolute path", errorInvalidFilename, binary)
+	}
+
+	return binary, nil
+}
+
+func (b *GoBuild) changeDir() error {
+	if b.cfg.Dir == nil {
+		return nil
+	}
+
+	// Note: validation of the dir is done on config.go
+	return os.Chdir(*b.cfg.Dir)
 }
 
 func (b *GoBuild) generateCommand(flags []string, binary string) []string {
@@ -178,6 +209,9 @@ func (b *GoBuild) generateCommandEnvVariables() ([]string, error) {
 
 		env = append(env, fmt.Sprintf("%s=%s", k, v))
 	}
+
+	// Always add the current working directory.
+	env = append(env, fmt.Sprintf("PWD=%s", os.Getenv("PWD")))
 
 	return env, nil
 }
@@ -248,7 +282,7 @@ func (b *GoBuild) generateOutputFilename() (string, error) {
 	}
 
 	if name == "" {
-		return "", fmt.Errorf("%w", errorEmptyFilename)
+		return "", fmt.Errorf("%w: filename is empty", errorInvalidFilename)
 	}
 	return name, nil
 }

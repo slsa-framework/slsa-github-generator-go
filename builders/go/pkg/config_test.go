@@ -74,9 +74,18 @@ func Test_ConfigFromFile(t *testing.T) {
 			expected: ErrorInvalidDirectory,
 		},
 		{
-			name:     "invalid path",
+			name:     "invalid main path",
 			path:     "../testdata/releaser-invalid-main.yml",
 			expected: ErrorInvalidDirectory,
+		},
+		{
+			name:     "invalid dir path",
+			path:     "../testdata/releaser-invalid-dir.yml",
+			expected: ErrorInvalidDirectory,
+		},
+		{
+			name: "valid dir path",
+			path: "./testdata/releaser-valid-dir.yml",
 		},
 	}
 	for _, tt := range tests {
