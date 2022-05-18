@@ -177,6 +177,7 @@ func getOutputBinaryPath(binary string) (string, error) {
 
 func (b *GoBuild) changeDir(dry bool) (string, error) {
 	if b.cfg.Dir == nil {
+		fmt.Println("nil Dir, returning PWD")
 		return os.Getenv("PWD"), nil
 	}
 
@@ -186,6 +187,7 @@ func (b *GoBuild) changeDir(dry bool) (string, error) {
 		return "", err
 	}
 
+	fmt.Println("changeDir Dir, returning", fp)
 	if dry {
 		return fp, nil
 	}
