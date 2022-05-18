@@ -136,7 +136,7 @@ func (b *GoBuild) Run(dry bool) error {
 
 		// Share working directory necessary for issuing the vendoring command.
 		fmt.Printf("::set-output name=go-working-dir::%s\n", dir)
-
+		fmt.Println("dry dir", dir)
 		return nil
 	}
 
@@ -151,6 +151,7 @@ func (b *GoBuild) Run(dry bool) error {
 	fmt.Println("binary", binary)
 	fmt.Println("command", command)
 	fmt.Println("env", envs)
+	fmt.Println("dir", dir)
 	return syscall.Exec(b.goc, command, envs)
 }
 

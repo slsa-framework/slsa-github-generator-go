@@ -41,7 +41,8 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$G
 e2e_verify_predicate_buildConfig_step_command "0" "$ATTESTATION" "[\"mod\",\"vendor\"]"
 echo "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
 echo "PWD: $PWD"
-echo -n "$ATTESTATION" | jq '.predicate.buildConfig.steps[0].env | sort'
+N="0"
+echo -n "$ATTESTATION" | jq -c ".predicate.buildConfig.steps[$N].env | sort"
 e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
 
 # Second compilaion step is the actual compilation.
