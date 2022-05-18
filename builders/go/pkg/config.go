@@ -100,11 +100,6 @@ func fromConfig(cf *goReleaserConfigFile) (*GoReleaserConfig, error) {
 		Dir:     cf.Dir,
 	}
 
-	fmt.Println("dir config:", cf.Dir)
-	if cf.Dir != nil {
-		fmt.Println("dir config2:", *cf.Dir)
-	}
-
 	if err := cfg.setEnvs(cf); err != nil {
 		return nil, err
 	}

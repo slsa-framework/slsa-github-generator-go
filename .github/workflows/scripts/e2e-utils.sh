@@ -23,15 +23,16 @@ e2e_verify_predicate_invocation_environment() {
     _e2e_verify_query "$1" "$3" '.predicate.invocation.environment.'"$2"
 }
 
-e2e_verify_predicate_buildConfig_command() {
-    _e2e_verify_query "$1" "$2" '.predicate.buildConfig.steps[0].command[1:]'
+e2e_verify_predicate_buildConfig_step_command() {
+    _e2e_verify_query "$2" "$3" ".predicate.buildConfig.steps[$1].command[1:]"
 }
 
-e2e_verify_predicate_buildConfig_env() {
-    local attestation="$1"
+
+e2e_verify_predicate_buildConfig_step_env() {
+    local attestation="$2"
     local expected
-    expected=$(echo -n "$2" | jq -c '.| sort')
-    _e2e_verify_query "${attestation}" "${expected}" '.predicate.buildConfig.steps[0].env | sort'
+    expected=$(echo -n "$3" | jq -c '.| sort')
+    _e2e_verify_query "${attestation}" "${expected}" ".predicate.buildConfig.steps[$1].env | sort"
 }
 
 e2e_verify_predicate_metadata() {
