@@ -297,20 +297,21 @@ func Test_runVerify(t *testing.T) {
 				t.Errorf(cmp.Diff(cmd, commands))
 			}
 
-			sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
-			expectedEnvs := append(tt.envs, fmt.Sprintf("PWD=%v", os.Getenv("PWD")))
-			if !cmp.Equal(env, expectedEnvs, sorted) {
-				t.Errorf(cmp.Diff(env, expectedEnvs))
-			}
-
 			var expectedWd string
 			if tt.workingDir == "" {
 				expectedWd = os.Getenv("PWD")
 			} else {
 				expectedWd = path.Join(os.Getenv("PWD"), tt.workingDir)
 			}
+
 			if expectedWd != wd {
 				t.Errorf(cmp.Diff(wd, expectedWd))
+			}
+
+			sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
+			expectedEnvs := append(tt.envs, fmt.Sprintf("PWD=%v", wd))
+			if !cmp.Equal(env, expectedEnvs, sorted) {
+				t.Errorf(cmp.Diff(env, expectedEnvs))
 			}
 		})
 	}

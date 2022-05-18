@@ -68,8 +68,8 @@ func GoBuildNew(goc string, cfg *GoReleaserConfig) *GoBuild {
 }
 
 func (b *GoBuild) Run(dry bool) error {
-	// Change directory.
-	dir, err := b.changeDir(dry)
+	// Get directory.
+	dir, err := b.getDir()
 	if err != nil {
 		return err
 	}
@@ -136,7 +136,6 @@ func (b *GoBuild) Run(dry bool) error {
 
 		// Share working directory necessary for issuing the vendoring command.
 		fmt.Printf("::set-output name=go-working-dir::%s\n", dir)
-		fmt.Println("dry dir", dir)
 		return nil
 	}
 
@@ -147,6 +146,11 @@ func (b *GoBuild) Run(dry bool) error {
 
 	// Generate the command.
 	command := b.generateCommand(flags, binary)
+
+	// Change directory.
+	if err := os.Chdir(dir); err != nil {
+		return err
+	}
 
 	fmt.Println("binary", binary)
 	fmt.Println("command", command)
@@ -175,9 +179,8 @@ func getOutputBinaryPath(binary string) (string, error) {
 	return binary, nil
 }
 
-func (b *GoBuild) changeDir(dry bool) (string, error) {
+func (b *GoBuild) getDir() (string, error) {
 	if b.cfg.Dir == nil {
-		fmt.Println("nil Dir, returning PWD")
 		return os.Getenv("PWD"), nil
 	}
 
@@ -187,12 +190,7 @@ func (b *GoBuild) changeDir(dry bool) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("changeDir Dir, returning", fp)
-	if dry {
-		return fp, nil
-	}
-
-	return fp, os.Chdir(fp)
+	return fp, nil
 }
 
 func (b *GoBuild) generateCommand(flags []string, binary string) []string {
@@ -228,7 +226,11 @@ func (b *GoBuild) generateCommandEnvVariables() ([]string, error) {
 	}
 
 	// Always add the current working directory.
-	env = append(env, fmt.Sprintf("PWD=%s", os.Getenv("PWD")))
+	dir, err := b.getDir()
+	if err != nil {
+		return nil, err
+	}
+	env = append(env, fmt.Sprintf("PWD=%s", dir))
 
 	return env, nil
 }
