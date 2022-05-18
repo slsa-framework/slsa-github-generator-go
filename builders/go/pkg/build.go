@@ -152,10 +152,11 @@ func (b *GoBuild) Run(dry bool) error {
 		return err
 	}
 
+	fmt.Println("dir", dir)
 	fmt.Println("binary", binary)
 	fmt.Println("command", command)
 	fmt.Println("env", envs)
-	fmt.Println("dir", dir)
+
 	return syscall.Exec(b.goc, command, envs)
 }
 
