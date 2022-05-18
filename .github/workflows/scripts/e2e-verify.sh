@@ -37,7 +37,7 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_event_name" "
 e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref" "$GITHUB_REF"
 e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$GITHUB_REF_TYPE"
 
-# First compilation step is vendoring
+# First step is vendoring
 e2e_verify_predicate_buildConfig_step_command "0" "$ATTESTATION" "[\"mod\",\"vendor\"]"
 e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
 
