@@ -32,6 +32,7 @@ e2e_verify_predicate_buildConfig_step_env() {
     local attestation="$2"
     local expected
     expected=$(echo -n "$3" | jq -c '.| sort')
+    echo "expected: $expected"
     _e2e_verify_query "${attestation}" "${expected}" ".predicate.buildConfig.steps[$1].env | sort"
 }
 
