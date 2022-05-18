@@ -96,7 +96,7 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 				// Only record the last entry, which is the PWD.
 				Env: env[len(env)-1:],
 			},
-			// Compiling step.
+			// Compilation step.
 			{
 				Command: com,
 				Env:     env,
