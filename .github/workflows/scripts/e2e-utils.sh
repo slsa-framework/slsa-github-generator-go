@@ -41,6 +41,13 @@ e2e_verify_predicate_buildConfig_step_env() {
     _e2e_verify_query "${attestation}" "${expected}" ".predicate.buildConfig.steps[$1].env | sort"
 }
 
+# $1: step number
+# $2: the attestation content
+# $3: expected value.
+e2e_verify_predicate_buildConfig_step_workingDir() {
+     _e2e_verify_query "$2" "$3" ".predicate.buildConfig.steps[$1].workingDir"
+}
+
 e2e_verify_predicate_metadata() {
     _e2e_verify_query "$1" "$2" '.predicate.metadata'
 }

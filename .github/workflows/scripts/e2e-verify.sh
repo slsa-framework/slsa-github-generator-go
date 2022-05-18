@@ -39,13 +39,14 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$G
 
 # First step is vendoring
 e2e_verify_predicate_buildConfig_step_command "0" "$ATTESTATION" "[\"mod\",\"vendor\"]"
-e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
+e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "null"
+e2e_verify_predicate_buildConfig_step_workingDir "0" "$ATTESTATION" "$PWD/builders/go/e2e-presubmits"
 
 # Second step is the actual compilation.
 e2e_verify_predicate_buildConfig_step_env "1" "$ATTESTATION" "[\"GOOS=linux\",\"GOARCH=amd64\",\"GO111MODULE=on\",\"CGO_ENABLED=0\",\"PWD=$PWD/builders/go/e2e-presubmits\"]"
-if [[ -z "$LDFLAGS" ]]; then    
-    e2e_verify_predicate_buildConfig_step_command "1" "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-o\",\"$BINARY\",\"main.go\"]"
-else
+e2e_verify_predicate_buildConfig_step_workingDir "1" "$ATTESTATION" "$PWD/builders/go/e2e-presubmits"
+
+if [[ -n "$LDFLAGS" ]]; then
     e2e_verify_predicate_buildConfig_step_command "1" "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-ldflags=-X main.gitVersion=v1.2.3 -X main.gitCommit=abcdef -X main.gitBranch=$BRANCH\",\"-o\",\"$BINARY\",\"main.go\"]"
     chmod a+x ./"$BINARY"
     V=$(./"$BINARY" | grep 'GitVersion: v1.2.3')
@@ -54,6 +55,8 @@ else
     e2e_assert_not_eq "$V" "" "GitVersion should not be empty"
     e2e_assert_not_eq "$C" "" "GitCommit should not be empty"
     e2e_assert_not_eq "$B" "" "GitBranch should not be empty"
+else
+    e2e_verify_predicate_buildConfig_step_command "1" "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-o\",\"$BINARY\",\"main.go\"]"
 fi
 
 e2e_verify_predicate_metadata "$ATTESTATION" "{\"buildInvocationID\":\"$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\",\"completeness\":{\"parameters\":true,\"environment\":false,\"materials\":false},\"reproducible\":false}"

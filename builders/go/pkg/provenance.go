@@ -38,8 +38,9 @@ const (
 
 type (
 	step struct {
-		Command []string `json:"command"`
-		Env     []string `json:"env"`
+		Command    []string `json:"command"`
+		Env        []string `json:"env"`
+		WorkingDir string   `json:"workingDir"`
 	}
 	buildConfig struct {
 		Version int    `json:"version"`
@@ -50,7 +51,7 @@ type (
 // GenerateProvenance translates github context into a SLSA provenance
 // attestation.
 // Spec: https://slsa.dev/provenance/v0.2
-func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
+func GenerateProvenance(name, digest, command, envs, workingDir string) ([]byte, error) {
 	gh, err := github.GetWorkflowContext()
 	if err != nil {
 		return nil, err
@@ -89,17 +90,18 @@ func GenerateProvenance(name, digest, command, envs string) ([]byte, error) {
 		Steps: []step{
 			// Vendoring step.
 			{
-				// Note: vendoring and comilation are currently
+				// Note: vendoring and comilation are
 				// performed in the same VM, so the compiler is
 				// the same.
-				Command: []string{com[0], "mod", "vendor"},
-				// Only record the last entry, which is the PWD.
-				Env: env[len(env)-1:],
+				Command:    []string{com[0], "mod", "vendor"},
+				WorkingDir: workingDir,
+				// Note: No user-defined env set for this step.
 			},
 			// Compilation step.
 			{
-				Command: com,
-				Env:     env,
+				Command:    com,
+				Env:        env,
+				WorkingDir: workingDir,
 			},
 		},
 	}

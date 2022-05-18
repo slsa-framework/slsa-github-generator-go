@@ -572,8 +572,7 @@ func Test_generateEnvVariables(t *testing.T) {
 				return
 			}
 			// Note: generated env variables contain the process's env variables too.
-			expectedFlags := append(os.Environ(), fmt.Sprintf("PWD=%s", os.Getenv("PWD")))
-			expectedFlags = append(expectedFlags, tt.expected.flags...)
+			expectedFlags := append(os.Environ(), tt.expected.flags...)
 			sorted := cmpopts.SortSlices(func(a, b string) bool { return a < b })
 			if !cmp.Equal(flags, expectedFlags, sorted) {
 				t.Errorf(cmp.Diff(flags, expectedFlags))

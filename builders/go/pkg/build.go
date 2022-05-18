@@ -225,13 +225,6 @@ func (b *GoBuild) generateCommandEnvVariables() ([]string, error) {
 		env = append(env, fmt.Sprintf("%s=%s", k, v))
 	}
 
-	// Always add the current working directory.
-	dir, err := b.getDir()
-	if err != nil {
-		return nil, err
-	}
-	env = append(env, fmt.Sprintf("PWD=%s", dir))
-
 	return env, nil
 }
 
