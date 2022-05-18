@@ -90,7 +90,7 @@ func GenerateProvenance(name, digest, command, envs, workingDir string) ([]byte,
 		Steps: []step{
 			// Vendoring step.
 			{
-				// Note: vendoring and comilation are
+				// Note: vendoring and compilation are
 				// performed in the same VM, so the compiler is
 				// the same.
 				Command:    []string{com[0], "mod", "vendor"},
