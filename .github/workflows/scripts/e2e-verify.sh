@@ -39,12 +39,13 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$G
 
 # First compilation step is vendoring
 e2e_verify_predicate_buildConfig_step_command "0" "$ATTESTATION" "[\"mod\",\"vendor\"]"
-echo "[\"PWD=\\$PWD/builders/go/e2e-presubmits\"]"
-cat $ATTESTATION | jq '.predicate.buildConfig.steps[0].env | sort'
-e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[\"PWD=\\$PWD/builders/go/e2e-presubmits\"]"
+echo "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
+echo "PWD: $PWD"
+echo -n "$ATTESTATION" | jq '.predicate.buildConfig.steps[0].env | sort'
+e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[\"PWD=$PWD/builders/go/e2e-presubmits\"]"
 
 # Second compilaion step is the actual compilation.
-e2e_verify_predicate_buildConfig_step_env "1" "$ATTESTATION" "[\"GOOS=linux\",\"GOARCH=amd64\",\"GO111MODULE=on\",\"CGO_ENABLED=0\",\"PWD=\\$PWD/builders/go/e2e-presubmits\"]"
+e2e_verify_predicate_buildConfig_step_env "1" "$ATTESTATION" "[\"GOOS=linux\",\"GOARCH=amd64\",\"GO111MODULE=on\",\"CGO_ENABLED=0\",\"PWD=$PWD/builders/go/e2e-presubmits\"]"
 if [[ -z "$LDFLAGS" ]]; then    
     e2e_verify_predicate_buildConfig_step_command "1" "$ATTESTATION" "[\"build\",\"-mod=vendor\",\"-trimpath\",\"-tags=netgo\",\"-o\",\"$BINARY\",\"main.go\"]"
 else
