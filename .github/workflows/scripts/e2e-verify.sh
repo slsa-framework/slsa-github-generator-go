@@ -39,11 +39,11 @@ e2e_verify_predicate_invocation_environment "$ATTESTATION" "github_ref_type" "$G
 
 # First step is vendoring
 e2e_verify_predicate_buildConfig_step_command "0" "$ATTESTATION" "[\"mod\",\"vendor\"]"
-e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "null"
+e2e_verify_predicate_buildConfig_step_env "0" "$ATTESTATION" "[]"
 e2e_verify_predicate_buildConfig_step_workingDir "0" "$ATTESTATION" "$PWD/builders/go/e2e-presubmits"
 
 # Second step is the actual compilation.
-e2e_verify_predicate_buildConfig_step_env "1" "$ATTESTATION" "[\"GOOS=linux\",\"GOARCH=amd64\",\"GO111MODULE=on\",\"CGO_ENABLED=0\",\"PWD=$PWD/builders/go/e2e-presubmits\"]"
+e2e_verify_predicate_buildConfig_step_env "1" "$ATTESTATION" "[\"GOOS=linux\",\"GOARCH=amd64\",\"GO111MODULE=on\",\"CGO_ENABLED=0\"]"
 e2e_verify_predicate_buildConfig_step_workingDir "1" "$ATTESTATION" "$PWD/builders/go/e2e-presubmits"
 
 if [[ -n "$LDFLAGS" ]]; then
